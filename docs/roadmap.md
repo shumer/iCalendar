@@ -30,11 +30,16 @@
   language change needs no restart, and a test sweeps the sources against the tables in both
   directions. No third party dependencies, see ADR 0002.
 
+- **Stage 5, release.** Self update from GitHub releases with signature verification, the menu
+  item that leads with a waiting update, the automatic check toggle and the About pane status.
+  `tests.yml` and `release.yml`, `Scripts/notarise.sh`, `Scripts/make-dmg.sh`, the app icon drawn
+  by a script, a Homebrew cask, `docs/release.md`, `docs/manual-checklist.md`, ADR 0003 on why
+  the app is not sandboxed.
+
 ## Next
 
-- **Stage 5, release.** Self update from GitHub releases in the manner of DevDeck with its menu
-  item and its settings toggle, the release and tests workflows, signing, notarisation, DMG,
-  Homebrew cask, the app icon.
+- Publish the first release once the five secrets are in the repository, and watch the run end
+  to end before trusting it. Then go through `docs/manual-checklist.md`.
 
 ## Open questions
 
@@ -53,4 +58,3 @@
 - Settings were checked by eye pane by pane and by relaunching with stored values (week numbers,
   compact density, dark theme, day number icon). Flipping them while the panel is open, the
   shortcut recorder and a live system language change were not driven by hand yet.
-- App icon artwork for the DMG and the About pane.

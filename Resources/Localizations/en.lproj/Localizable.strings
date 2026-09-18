@@ -81,3 +81,15 @@
 "settings.about.version" = "Version %@ (%@)";
 "settings.about.tagline" = "A calendar in the menu bar.";
 "settings.about.source" = "Source code on GitHub";
+
+"menu.checkForUpdates" = "Check for Updates…";
+"menu.updateTo" = "Update to %@";
+"settings.updates.automatic" = "Check for updates automatically";
+"updates.checking" = "Checking…";
+"updates.upToDate" = "MenuCal is up to date.";
+"updates.available" = "Version %@ is available.";
+"updates.availableManual" = "A new version is available. This copy cannot replace itself, so the button opens the release page.";
+"updates.downloading" = "Downloading and verifying…";
+"updates.error.check" = "Could not check for updates. Try again later.";
+"updates.error.untrusted" = "The download is not signed by the developer of this copy, so it was not installed.";
+"updates.error.install" = "The update could not be installed.";

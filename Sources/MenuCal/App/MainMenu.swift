@@ -9,6 +9,7 @@ enum MainMenu {
 
     let app = NSMenu()
     app.addItem(item(L("menu.about"), #selector(AppDelegate.showAbout(_:)), target: target))
+    app.addItem(item(L("menu.checkForUpdates"), #selector(AppDelegate.checkForUpdates(_:)), target: target))
     app.addItem(.separator())
     app.addItem(item(L("menu.settings"), #selector(AppDelegate.showSettings(_:)), key: ",", target: target))
     app.addItem(.separator())

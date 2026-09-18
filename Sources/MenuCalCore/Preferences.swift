@@ -76,6 +76,7 @@ public final class Preferences {
     static let customAccent = "appearance.customAccent"
     static let checksForUpdates = "updates.automatic"
     static let hotkey = "hotkey.togglePanel"
+    static let lastUpdateCheck = "updates.lastCheck"
   }
 
   /// The stored value for "the pattern is hand written".
@@ -148,6 +149,16 @@ public final class Preferences {
     }
   }
 
+  public var lastUpdateCheck: Date? {
+    didSet {
+      if let lastUpdateCheck {
+        defaults.set(lastUpdateCheck.timeIntervalSinceReferenceDate, forKey: Key.lastUpdateCheck)
+      } else {
+        defaults.removeObject(forKey: Key.lastUpdateCheck)
+      }
+    }
+  }
+
   /// Reads what is stored and falls back, key by key, to the default for anything missing or
   /// unreadable. A first launch and a value written by a newer version look the same here.
   public init(defaults: UserDefaults = .standard) {
@@ -198,6 +209,8 @@ public final class Preferences {
     }
     checksForUpdatesAutomatically = flag(Key.checksForUpdates, true)
     hotkey = (defaults.array(forKey: Key.hotkey) as? [Int]).flatMap { Hotkey(storedValue: $0) }
+    lastUpdateCheck = (defaults.object(forKey: Key.lastUpdateCheck) as? Double)
+      .map { Date(timeIntervalSinceReferenceDate: $0) }
   }
 
   /// The pattern the menu bar shows: the preset resolved for the locale, or the hand written one.
