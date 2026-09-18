@@ -12,8 +12,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
   private var cache = FormatterCache(calendar: .current, locale: .autoupdatingCurrent)
   private var timer: Timer?
   private var lastTitle = ""
+  private var lastIconKey = ""
   private var wantsHighlight = false
   private var mouseUpMonitor: Any?
+
+  var button: NSStatusBarButton? { statusItem.button }
 
   var onLeftClick: ((NSStatusBarButton) -> Void)?
   var onOpenSettings: (() -> Void)?
@@ -49,6 +52,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
   /// The locale, the time zone, the clock or the day changed: every cached formatter is stale.
   func systemChanged() {
     cache.reset(calendar: .current, locale: .autoupdatingCurrent)
+    lastIconKey = ""
+    statusItem.button?.setAccessibilityLabel(L("statusItem.accessibilityLabel"))
     refresh()
   }
 
@@ -57,6 +62,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
       _ = preferences.formatPreset
       _ = preferences.customPattern
       _ = preferences.lastValidPattern
+      _ = preferences.menuBarIcon
     } onChange: { [weak self] in
       Task { @MainActor in
         self?.refresh()
@@ -102,7 +108,20 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         string: title, attributes: [.font: Tokens.MenuBar.font])
       lastTitle = title
     }
+    refreshIcon(at: now)
     scheduleNextRefresh(after: now)
+  }
+
+  private func refreshIcon(at now: Date) {
+    guard let button = statusItem.button else { return }
+    let day = cache.string(from: now, pattern: "d")
+    let key = "\(preferences.menuBarIcon.rawValue) \(day)"
+    guard key != lastIconKey else { return }
+    lastIconKey = key
+    let image = MenuBarIconRenderer.image(for: preferences.menuBarIcon, dayNumber: day)
+    button.image = image
+    button.imagePosition = image == nil ? .noImage : .imageLeading
+    button.imageHugsTitle = true
   }
 
   private func scheduleNextRefresh(after now: Date) {

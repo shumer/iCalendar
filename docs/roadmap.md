@@ -21,11 +21,20 @@
   format from `Preferences`, and one `SystemChangeObserver` refreshes everything on a locale, time
   zone, clock or day change and on wake.
 
+- **Stage 4, settings.** Four panes in the system tab style. General: format editor with one
+  click locale templates, a hand written TR35 pattern with validation, a live preview and the
+  fallback to the last valid pattern, menu bar icon (none, calendar, day number; template images),
+  launch at login, a global shortcut recorder. Calendar: first weekday, week numbers, full date
+  line, weekends, reopen behaviour. Appearance: theme, system or custom accent, density. About.
+  Every change applies at once. Strings in en, ru, uk and pl are picked at run time, so a system
+  language change needs no restart, and a test sweeps the sources against the tables in both
+  directions. No third party dependencies, see ADR 0002.
+
 ## Next
 
-- **Stage 4, settings.** Four panes, format editor with live preview, localisation en, ru, uk, pl,
-  reaction to locale and time zone changes.
-- **Stage 5, release.** Signing, notarisation, updates, CI, DMG, Homebrew cask.
+- **Stage 5, release.** Self update from GitHub releases in the manner of DevDeck with its menu
+  item and its settings toggle, the release and tests workflows, signing, notarisation, DMG,
+  Homebrew cask, the app icon.
 
 ## Open questions
 
@@ -41,7 +50,7 @@
   year first (Japanese, Chinese, Hungarian) read oddly; `MonthGrid.monthTitle` has the right
   order and the header can switch to it if those locales matter.
 
-- Updates: Sparkle 2 has to be embedded and signed inside out in a hand-assembled bundle. Probe it
-  on this toolchain before Stage 5.
-- The global hotkey: probe the KeyboardShortcuts package on this toolchain before Stage 4.
+- Settings were checked by eye pane by pane and by relaunching with stored values (week numbers,
+  compact density, dark theme, day number icon). Flipping them while the panel is open, the
+  shortcut recorder and a live system language change were not driven by hand yet.
 - App icon artwork for the DMG and the About pane.

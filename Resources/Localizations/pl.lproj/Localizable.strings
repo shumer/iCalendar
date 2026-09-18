@@ -1,0 +1,83 @@
+"statusItem.accessibilityLabel" = "MenuCal, kalendarz";
+"panel.accessibilityLabel" = "Kalendarz";
+
+"menu.settings" = "Ustawienia…";
+"menu.about" = "MenuCal - informacje";
+"menu.quit" = "Zakończ MenuCal";
+"menu.edit" = "Edycja";
+"menu.edit.undo" = "Cofnij";
+"menu.edit.redo" = "Ponów";
+"menu.edit.cut" = "Wytnij";
+"menu.edit.copy" = "Kopiuj";
+"menu.edit.paste" = "Wklej";
+"menu.edit.selectAll" = "Zaznacz wszystko";
+"menu.window" = "Okno";
+"menu.window.close" = "Zamknij";
+"menu.window.minimize" = "Zminimalizuj";
+
+"navigation.today" = "Dzisiaj";
+"navigation.previousMonth" = "Poprzedni miesiąc";
+"navigation.nextMonth" = "Następny miesiąc";
+"accessibility.today" = "Dzisiaj";
+"accessibility.week" = "Tydzień %d";
+"accessibility.selectedDate" = "Wybrano: %@";
+
+"settings.general" = "Ogólne";
+"settings.calendar" = "Kalendarz";
+"settings.appearance" = "Wygląd";
+"settings.about" = "Informacje";
+
+"settings.format.section" = "Format na pasku menu";
+"settings.format.presets" = "Szablony";
+"settings.format.preset.dateOnly" = "Tylko data";
+"settings.format.preset.dateAndWeekday" = "Data + dzień tygodnia";
+"settings.format.preset.dateAndTime" = "Data + godzina";
+"settings.format.preset.compact" = "Kompaktowy";
+"settings.format.preset.full" = "Pełny";
+"settings.format.pattern" = "Wzorzec";
+"settings.format.preview" = "Podgląd";
+"settings.format.error.empty" = "Wzorzec jest pusty.";
+"settings.format.error.quote" = "Apostrof nie jest zamknięty.";
+"settings.format.error.unsupported" = "Pole „%@” nie jest obsługiwane.";
+"settings.format.error.tooLong" = "Pole „%@” powtórzono zbyt wiele razy.";
+"settings.format.error.keeps" = "Pasek menu zachowuje ostatni działający format.";
+"settings.format.clockHint" = "Aplikacja nie może ukryć zegara systemowego. Robi się to w Ustawieniach systemowych.";
+"settings.format.openClock" = "Otwórz ustawienia zegara…";
+
+"settings.icon" = "Ikona na pasku menu";
+"settings.icon.none" = "Brak";
+"settings.icon.calendar" = "Kalendarz";
+"settings.icon.dayNumber" = "Z dniem";
+"settings.general.launchAtLogin" = "Uruchamiaj przy logowaniu";
+"settings.general.needsApproval" = "Zezwól na MenuCal w Ustawieniach systemowych, aby dokończyć włączanie.";
+"settings.general.openLoginItems" = "Otwórz rzeczy otwierane przy logowaniu…";
+"settings.hotkey" = "Skrót globalny";
+"settings.hotkey.record" = "Nagraj skrót";
+"settings.hotkey.recording" = "Naciśnij skrót…";
+"settings.hotkey.clear" = "Usuń skrót";
+"settings.hotkey.refused" = "Ten skrót jest zajęty przez system lub inną aplikację.";
+
+"settings.calendar.firstWeekday" = "Pierwszy dzień tygodnia";
+"settings.calendar.firstWeekday.system" = "Systemowy";
+"settings.calendar.weekNumbers" = "Pokazuj numery tygodni";
+"settings.calendar.fullDate" = "Pokazuj wiersz z pełną datą";
+"settings.calendar.weekends" = "Wyróżniaj weekendy";
+"settings.calendar.reopen" = "Po otwarciu";
+"settings.calendar.reopen.current" = "Zawsze bieżący miesiąc";
+"settings.calendar.reopen.last" = "Pamiętaj ostatnio oglądany";
+
+"settings.appearance.theme" = "Motyw";
+"settings.appearance.theme.system" = "Systemowy";
+"settings.appearance.theme.light" = "Jasny";
+"settings.appearance.theme.dark" = "Ciemny";
+"settings.appearance.accent" = "Kolor akcentu";
+"settings.appearance.accent.system" = "Systemowy";
+"settings.appearance.accent.custom" = "Własny";
+"settings.appearance.accent.color" = "Kolor";
+"settings.appearance.density" = "Gęstość";
+"settings.appearance.density.regular" = "Zwykła";
+"settings.appearance.density.compact" = "Kompaktowa";
+
+"settings.about.version" = "Wersja %@ (%@)";
+"settings.about.tagline" = "Kalendarz na pasku menu.";
+"settings.about.source" = "Kod źródłowy na GitHubie";
