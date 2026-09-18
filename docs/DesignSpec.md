@@ -91,9 +91,9 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | Token | AppKit |
 |---|---|
 | `text.primary` | `labelColor` |
-| `text.weekend`, `text.secondary` | `secondaryLabelColor` |
+| `text.secondary` | `secondaryLabelColor` |
 | `text.adjacentMonth`, `text.weekNumber` | `tertiaryLabelColor` |
-| `text.holiday` | `systemRed` |
+| `text.dayOff` (highlighted weekends, public holidays) | `systemRed` |
 | `accent` | `controlAccentColor` |
 | `text.onAccent` | `white` |
 | `fill.hover`, `fill.footer`, `fill.navCapsule` | `quaternarySystemFill` |
@@ -107,9 +107,9 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | State | Rendering |
 |---|---|
 | Normal | primary text |
-| Weekend | secondary text, only while "Highlight weekends" is on; decided by `Calendar.isDateInWeekend` |
+| Weekend | `text.dayOff` while "Highlight weekends in red" is on, primary text otherwise; decided by `Calendar.isDateInWeekend`. The weekday symbols of weekend columns follow. Changed on 2026-09-18: the first version dimmed weekends to secondary text, which the customer read as the setting doing nothing |
 | Adjacent month | tertiary text, clickable, a click also moves to that month |
-| Public holiday | `text.holiday`; at 45% opacity in an adjacent month. The name is the cell's tooltip and part of its VoiceOver label |
+| Public holiday | `text.dayOff`, the same red as a highlighted weekend, because both mean a day off; at 45% opacity in an adjacent month, and so is a weekend there. The name is the cell's tooltip and part of its VoiceOver label |
 | Hover | `fill.hover` circle |
 | Pressed | `fill.pressed` circle, scale 0.94 on the circle only, the hit area does not move |
 | Selected | 1.5 pt accent ring inside the circle, semibold |
@@ -119,7 +119,7 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | Keyboard focus | 3 pt `focus` ring, 1 pt outside the circle, drawn over every other state |
 
 Today and selected differ by shape and by weight, not by colour alone (Differentiate Without
-Colour). Text colour priority: today > holiday > adjacent > weekend > normal; a selected day keeps
+Colour). Text colour priority: today > day off (holiday or highlighted weekend) > adjacent > normal; a selected day keeps
 the colour it had.
 
 The grid is always 6 rows of 7. A sixth row that the month does not need holds the next month's
@@ -182,7 +182,7 @@ The status item's width is never animated.
   250 ms cooldown. The horizontal swipe uses the same threshold, and the dominant axis is decided
   after 8 pt.
 - The footer shows the full date. When the selected day is a public holiday it shows a short
-  date, a middle dot and the holiday's name in `text.holiday`; the date comes first so that a
+  date, a middle dot and the holiday's name in `text.dayOff`; the date comes first so that a
   long name is what gets truncated.
 - Public holidays are official days off for the whole country of the system region, or of the
   country picked in settings. See `docs/adr/0004-public-holidays.md`.

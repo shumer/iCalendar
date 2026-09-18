@@ -34,7 +34,7 @@ struct MonthGridView: View {
           .font(model.typography.weekday)
           .foregroundStyle(
             symbol.isWeekend && model.preferences.highlightsWeekends
-              ? Palette.tertiary : Palette.secondary)
+              ? Palette.dayOff : Palette.secondary)
           .lineLimit(1)
           .minimumScaleFactor(0.7)
           .frame(width: metrics.dayCellSize)

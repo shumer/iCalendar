@@ -61,7 +61,7 @@
 "settings.calendar.firstWeekday.system" = "Системный";
 "settings.calendar.weekNumbers" = "Показывать номера недель";
 "settings.calendar.fullDate" = "Показывать строку с полной датой";
-"settings.calendar.weekends" = "Выделять выходные";
+"settings.calendar.weekends" = "Выделять выходные красным";
 "settings.calendar.reopen" = "При открытии";
 "settings.calendar.reopen.current" = "Всегда текущий месяц";
 "settings.calendar.reopen.last" = "Запоминать последний просмотренный";

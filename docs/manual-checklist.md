@@ -44,11 +44,15 @@ macOS 14, 15 and 27 were not available and count as unchecked.
   name in red.
 - A first launch puts the status item beside Control Center.
 
+- "Highlight weekends" flipped through the accessibility tree while the panel was open: the grid
+  redrew at once, so settings do apply to an open panel. With the switch on weekends are red, with
+  it off they look like any other day.
+
 ## Never watched
 
 - Keyboard navigation and scrolling in the panel, end to end.
 - Recording a global shortcut and firing it.
-- Settings flipped while the panel is open.
+- Settings other than the weekend switch flipped while the panel is open.
 - Launch at login after a reboot.
 - A real self update from one notarised release to the next.
 - The release workflow itself: it needs the five secrets and a published tag.
