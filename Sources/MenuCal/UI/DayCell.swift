@@ -106,11 +106,12 @@ private struct DayCellStyle: ButtonStyle {
 
   private var textColor: Color {
     if day.isToday { return Palette.onAccent }
-    if day.holidayName != nil {
-      return Palette.holiday.opacity(day.isInCurrentMonth ? 1 : Tokens.Opacity.holidayInAdjacentMonth)
+    // Red means a day off, whichever rule made it one. Dimming weekends instead, as this did at
+    // first, reads as the opposite of highlighting them, and on glass as nothing at all.
+    if day.holidayName != nil || (day.isWeekend && highlightsWeekends) {
+      return Palette.dayOff.opacity(day.isInCurrentMonth ? 1 : Tokens.Opacity.dayOffInAdjacentMonth)
     }
     if !day.isInCurrentMonth { return isHighContrast ? Palette.secondary : Palette.tertiary }
-    if day.isWeekend && highlightsWeekends { return Palette.secondary }
     return Palette.primary
   }
 }

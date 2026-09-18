@@ -61,7 +61,7 @@
 "settings.calendar.firstWeekday.system" = "System";
 "settings.calendar.weekNumbers" = "Show week numbers";
 "settings.calendar.fullDate" = "Show the full date line";
-"settings.calendar.weekends" = "Highlight weekends";
+"settings.calendar.weekends" = "Highlight weekends in red";
 "settings.calendar.reopen" = "When opened";
 "settings.calendar.reopen.current" = "Always show the current month";
 "settings.calendar.reopen.last" = "Remember the last viewed month";

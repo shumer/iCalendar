@@ -35,7 +35,7 @@ struct CalendarPanelView: View {
       return Text(model.footerText).foregroundStyle(Palette.secondary)
     }
     return Text(holiday.date + "  ·  ").foregroundStyle(Palette.secondary)
-      + Text(holiday.name).foregroundStyle(Palette.holiday)
+      + Text(holiday.name).foregroundStyle(Palette.dayOff)
   }
 
   private var footer: some View {
