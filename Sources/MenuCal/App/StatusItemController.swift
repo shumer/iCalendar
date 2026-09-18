@@ -26,12 +26,29 @@ final class StatusItemController: NSObject, NSMenuDelegate {
   /// The version waiting to be installed, asked for each time the menu opens.
   var availableUpdate: (() -> String?)?
 
+  private static let autosaveName = "MenuCalStatusItem"
+
+  /// AppKit keeps a status item's place under this key, as a distance from the right end of the
+  /// menu bar, and restores it when the autosave name is set. It is not documented, but it is
+  /// what Command-dragging writes, and it has kept its shape for many releases. A first launch
+  /// has no such key, and a new item then lands to the left of every other one; seeding the
+  /// smallest distance puts it as far right as macOS lets a third party item go, beside the
+  /// battery, Control Center and the clock, which the system keeps for itself. Once the user
+  /// drags the item, their position is the one stored and this never runs again.
+  private static func seedPositionOnFirstLaunch() {
+    let key = "NSStatusItem Preferred Position \(autosaveName)"
+    if UserDefaults.standard.object(forKey: key) == nil {
+      UserDefaults.standard.set(1.0, forKey: key)
+    }
+  }
+
   init(preferences: Preferences) {
     self.preferences = preferences
+    Self.seedPositionOnFirstLaunch()
     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     super.init()
 
-    statusItem.autosaveName = "MenuCalStatusItem"
+    statusItem.autosaveName = Self.autosaveName
     statusItem.behavior = []
     contextMenu.delegate = self
 
