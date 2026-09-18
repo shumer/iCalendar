@@ -22,7 +22,8 @@ Force ad-hoc with `CODESIGN_IDENTITY=- ./build.sh`.
 ## Tests
 
 ```bash
-./run-tests.sh
+./run-tests.sh              # the suite
+./run-tests.sh --coverage   # the suite with a line coverage report for MenuCalCore, 80% minimum
 ```
 
 The suite is a plain executable, `MenuCalTests`, because the Command Line Tools ship neither
