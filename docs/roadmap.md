@@ -44,8 +44,8 @@
 
 ## Next
 
-- Publish the first release once the five secrets are in the repository, and watch the run end
-  to end before trusting it. Then go through `docs/manual-checklist.md`.
+- Go through what `docs/manual-checklist.md` lists as never watched: keyboard and scroll in the
+  panel, the shortcut recorder, launch at login after a reboot, a VoiceOver pass, Instruments.
 
 ## Open questions
 
