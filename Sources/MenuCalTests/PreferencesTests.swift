@@ -96,6 +96,45 @@ func preferencesTests(_ run: TestRun) {
     t.expectEqual(preferences.fallbackPattern(locale: english), FormatPreset.dateAndWeekday.pattern(locale: english))
   }
 
+  run.test("an invalid custom pattern gives way to the last valid one before any preset") { t in
+    let defaults = scratchDefaults()
+    defaults.set("custom", forKey: "format.preset")
+    defaults.set("d QQQ", forKey: "format.customPattern")
+    defaults.set("EEEE d", forKey: "format.lastValidPattern")
+    let preferences = Preferences(defaults: defaults)
+    t.expectEqual(preferences.formatPreset, nil)
+    t.expectEqual(preferences.menuBarPattern(locale: english), "EEEE d")
+  }
+
+  run.test("no shortcut is assigned by default, and an assigned one survives a relaunch") { t in
+    let defaults = scratchDefaults()
+    let preferences = Preferences(defaults: defaults)
+    t.expectEqual(preferences.hotkey, nil)
+    preferences.hotkey = Hotkey(keyCode: 8, modifiers: [.option, .command])
+    t.expectEqual(Preferences(defaults: defaults).hotkey, Hotkey(keyCode: 8, modifiers: [.option, .command]))
+    preferences.hotkey = nil
+    t.expectEqual(Preferences(defaults: defaults).hotkey, nil)
+  }
+
+  run.test("a stored shortcut that would swallow typing is dropped") { t in
+    let defaults = scratchDefaults()
+    defaults.set([8, 4], forKey: "hotkey.togglePanel")
+    t.expectEqual(Preferences(defaults: defaults).hotkey, nil, "Shift+C is typing")
+    defaults.set([8], forKey: "hotkey.togglePanel")
+    t.expectEqual(Preferences(defaults: defaults).hotkey, nil)
+    defaults.set([8, 99], forKey: "hotkey.togglePanel")
+    t.expectEqual(Preferences(defaults: defaults).hotkey, nil)
+  }
+
+  run.test("shortcut rules and symbols") { t in
+    t.expect(Hotkey(keyCode: 8, modifiers: [.command]).isUsable)
+    t.expect(Hotkey(keyCode: 8, modifiers: [.control, .shift]).isUsable)
+    t.expect(!Hotkey(keyCode: 8, modifiers: []).isUsable)
+    t.expect(!Hotkey(keyCode: 8, modifiers: [.shift]).isUsable)
+    t.expect(Hotkey(keyCode: 122, modifiers: []).isUsable, "F1 alone is fine")
+    t.expectEqual(HotkeyModifiers([.command, .control, .shift, .option]).symbols, "⌃⌥⇧⌘")
+  }
+
   run.test("the fallback is the last pattern that worked") { t in
     let preferences = Preferences(defaults: scratchDefaults())
     preferences.lastValidPattern = "d MMM"

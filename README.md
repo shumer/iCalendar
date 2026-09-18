@@ -6,6 +6,16 @@ macOS 14. No events, no accounts, no network: a date and a calendar, finished pr
 
 Status: in development. See `docs/roadmap.md` for what works today.
 
+## What it does
+
+- Shows the date in the menu bar in a format you choose: five locale aware presets or your own
+  Unicode pattern with a live preview, with an optional calendar or day number icon.
+- Opens a month grid under it: keyboard, scroll and swipe navigation, week numbers, a full date
+  line, weekends, a Compact density, light and dark, the system accent or your own.
+- Follows the system language, region, first weekday, calendar and time zone as they change,
+  without a restart. The interface is in English, Russian, Ukrainian and Polish.
+- Launches at login if you want it to, and opens from a global shortcut.
+
 ## Build
 
 Requirements: macOS 14 or later and the Swift 6 toolchain. The Command Line Tools are enough;

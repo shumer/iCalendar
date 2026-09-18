@@ -15,14 +15,69 @@
 "menu.window.close" = "Закрыть";
 "menu.window.minimize" = "Свернуть";
 
-"settings.general" = "Основные";
-"settings.general.launchAtLogin" = "Запускать при входе в систему";
-"settings.general.needsApproval" = "Разрешите MenuCal в Системных настройках, чтобы включить автозапуск.";
-"settings.general.openLoginItems" = "Открыть объекты входа…";
-
 "navigation.today" = "Сегодня";
 "navigation.previousMonth" = "Предыдущий месяц";
 "navigation.nextMonth" = "Следующий месяц";
 "accessibility.today" = "Сегодня";
 "accessibility.week" = "Неделя %d";
 "accessibility.selectedDate" = "Выбрано: %@";
+
+"settings.general" = "Основные";
+"settings.calendar" = "Календарь";
+"settings.appearance" = "Оформление";
+"settings.about" = "О программе";
+
+"settings.format.section" = "Формат в меню-баре";
+"settings.format.presets" = "Пресеты";
+"settings.format.preset.dateOnly" = "Только дата";
+"settings.format.preset.dateAndWeekday" = "Дата + день недели";
+"settings.format.preset.dateAndTime" = "Дата + время";
+"settings.format.preset.compact" = "Компактный";
+"settings.format.preset.full" = "Полный";
+"settings.format.pattern" = "Шаблон";
+"settings.format.preview" = "Превью";
+"settings.format.error.empty" = "Шаблон пуст.";
+"settings.format.error.quote" = "Кавычка не закрыта.";
+"settings.format.error.unsupported" = "Поле «%@» не поддерживается.";
+"settings.format.error.tooLong" = "Поле «%@» повторено слишком много раз.";
+"settings.format.error.keeps" = "В меню-баре остаётся последний рабочий формат.";
+"settings.format.clockHint" = "Системные часы приложение скрыть не может. Это делается в Системных настройках.";
+"settings.format.openClock" = "Открыть настройки часов…";
+
+"settings.icon" = "Иконка в меню-баре";
+"settings.icon.none" = "Нет";
+"settings.icon.calendar" = "Календарь";
+"settings.icon.dayNumber" = "С числом";
+"settings.general.launchAtLogin" = "Запускать при входе в систему";
+"settings.general.needsApproval" = "Разрешите MenuCal в Системных настройках, чтобы включить автозапуск.";
+"settings.general.openLoginItems" = "Открыть объекты входа…";
+"settings.hotkey" = "Глобальный хоткей";
+"settings.hotkey.record" = "Записать сочетание";
+"settings.hotkey.recording" = "Нажмите сочетание…";
+"settings.hotkey.clear" = "Убрать сочетание";
+"settings.hotkey.refused" = "Это сочетание занято системой или другим приложением.";
+
+"settings.calendar.firstWeekday" = "Первый день недели";
+"settings.calendar.firstWeekday.system" = "Системный";
+"settings.calendar.weekNumbers" = "Показывать номера недель";
+"settings.calendar.fullDate" = "Показывать строку с полной датой";
+"settings.calendar.weekends" = "Выделять выходные";
+"settings.calendar.reopen" = "При открытии";
+"settings.calendar.reopen.current" = "Всегда текущий месяц";
+"settings.calendar.reopen.last" = "Запоминать последний просмотренный";
+
+"settings.appearance.theme" = "Тема";
+"settings.appearance.theme.system" = "Системная";
+"settings.appearance.theme.light" = "Светлая";
+"settings.appearance.theme.dark" = "Тёмная";
+"settings.appearance.accent" = "Акцентный цвет";
+"settings.appearance.accent.system" = "Системный";
+"settings.appearance.accent.custom" = "Свой";
+"settings.appearance.accent.color" = "Цвет";
+"settings.appearance.density" = "Плотность";
+"settings.appearance.density.regular" = "Обычная";
+"settings.appearance.density.compact" = "Компактная";
+
+"settings.about.version" = "Версия %@ (%@)";
+"settings.about.tagline" = "Календарь в меню-баре.";
+"settings.about.source" = "Исходный код на GitHub";

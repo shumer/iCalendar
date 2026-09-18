@@ -27,6 +27,7 @@ struct DayCell: View {
         highlightsWeekends: model.preferences.highlightsWeekends,
         isHighContrast: contrast == .increased,
         pulse: day.isToday ? model.state.todayPulseCount : 0,
+        accent: model.accent,
         metrics: model.metrics,
         typography: model.typography))
     .focusable(false)
@@ -45,6 +46,7 @@ private struct DayCellStyle: ButtonStyle {
   let highlightsWeekends: Bool
   let isHighContrast: Bool
   let pulse: Int
+  let accent: Color
   let metrics: Metrics
   let typography: Typography
 
@@ -87,7 +89,7 @@ private struct DayCellStyle: ButtonStyle {
         } else {
           Circle()
             .strokeBorder(
-              Color.accentColor,
+              accent,
               lineWidth: isHighContrast ? Tokens.Ring.selectedHighContrast : Tokens.Ring.selected)
         }
       }
@@ -95,7 +97,7 @@ private struct DayCellStyle: ButtonStyle {
   }
 
   private func fill(isPressed: Bool) -> Color {
-    if day.isToday { return .accentColor }
+    if day.isToday { return accent }
     if isPressed { return Palette.pressedFill }
     if isHovered { return Palette.hoverFill }
     return .clear
