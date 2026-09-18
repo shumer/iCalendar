@@ -21,6 +21,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
   var onLeftClick: ((NSStatusBarButton) -> Void)?
   var onOpenSettings: (() -> Void)?
   var onOpenAbout: (() -> Void)?
+  var onCheckForUpdates: (() -> Void)?
+  var onInstallUpdate: (() -> Void)?
+  /// The version waiting to be installed, asked for each time the menu opens.
+  var availableUpdate: (() -> String?)?
 
   init(preferences: Preferences) {
     self.preferences = preferences
@@ -159,8 +163,14 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
   func menuNeedsUpdate(_ menu: NSMenu) {
     menu.removeAllItems()
+    // A waiting update is the first thing the menu says, so it is never missed.
+    if let version = availableUpdate?() {
+      menu.addItem(item(L("menu.updateTo", version), #selector(installUpdate)))
+      menu.addItem(.separator())
+    }
     menu.addItem(item(L("menu.settings"), #selector(openSettings), key: ","))
     menu.addItem(item(L("menu.about"), #selector(openAbout)))
+    menu.addItem(item(L("menu.checkForUpdates"), #selector(checkForUpdates)))
     menu.addItem(.separator())
     let quit = NSMenuItem(
       title: L("menu.quit"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
@@ -175,4 +185,6 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
   @objc private func openSettings() { onOpenSettings?() }
   @objc private func openAbout() { onOpenAbout?() }
+  @objc private func checkForUpdates() { onCheckForUpdates?() }
+  @objc private func installUpdate() { onInstallUpdate?() }
 }

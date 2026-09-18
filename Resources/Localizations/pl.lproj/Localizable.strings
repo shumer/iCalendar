@@ -81,3 +81,15 @@
 "settings.about.version" = "Wersja %@ (%@)";
 "settings.about.tagline" = "Kalendarz na pasku menu.";
 "settings.about.source" = "Kod źródłowy na GitHubie";
+
+"menu.checkForUpdates" = "Sprawdź uaktualnienia…";
+"menu.updateTo" = "Uaktualnij do %@";
+"settings.updates.automatic" = "Sprawdzaj uaktualnienia automatycznie";
+"updates.checking" = "Sprawdzanie…";
+"updates.upToDate" = "MenuCal jest aktualny.";
+"updates.available" = "Dostępna jest wersja %@.";
+"updates.availableManual" = "Dostępna jest nowa wersja. Ta kopia nie może zastąpić samej siebie, więc przycisk otworzy stronę wydania.";
+"updates.downloading" = "Pobieranie i weryfikacja…";
+"updates.error.check" = "Nie udało się sprawdzić uaktualnień. Spróbuj później.";
+"updates.error.untrusted" = "Pobrany plik nie jest podpisany przez twórcę tej kopii, więc nie został zainstalowany.";
+"updates.error.install" = "Nie udało się zainstalować uaktualnienia.";

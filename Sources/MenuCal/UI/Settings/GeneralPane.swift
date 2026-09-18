@@ -107,6 +107,10 @@ struct GeneralPane: View {
             .foregroundStyle(.red)
         }
       }
+
+      Section {
+        Toggle(L("settings.updates.automatic"), isOn: $preferences.checksForUpdatesAutomatically)
+      }
     }
     .formStyle(.grouped)
     .frame(width: 520)
