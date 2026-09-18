@@ -81,3 +81,15 @@
 "settings.about.version" = "Версия %@ (%@)";
 "settings.about.tagline" = "Календарь в меню-баре.";
 "settings.about.source" = "Исходный код на GitHub";
+
+"menu.checkForUpdates" = "Проверить обновления…";
+"menu.updateTo" = "Обновить до %@";
+"settings.updates.automatic" = "Проверять обновления автоматически";
+"updates.checking" = "Проверяю…";
+"updates.upToDate" = "У вас последняя версия MenuCal.";
+"updates.available" = "Доступна версия %@.";
+"updates.availableManual" = "Доступна новая версия. Эта копия не может заменить себя сама, поэтому кнопка откроет страницу релиза.";
+"updates.downloading" = "Загружаю и проверяю подпись…";
+"updates.error.check" = "Не удалось проверить обновления. Попробуйте позже.";
+"updates.error.untrusted" = "Загрузка подписана не тем разработчиком, что эта копия, поэтому она не установлена.";
+"updates.error.install" = "Не удалось установить обновление.";

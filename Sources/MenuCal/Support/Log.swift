@@ -8,4 +8,5 @@ enum Log {
   static let statusItem = Logger(subsystem: subsystem, category: "status-item")
   static let panel = Logger(subsystem: subsystem, category: "panel")
   static let settings = Logger(subsystem: subsystem, category: "settings")
+  static let updates = Logger(subsystem: subsystem, category: "updates")
 }

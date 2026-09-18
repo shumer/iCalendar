@@ -16,6 +16,13 @@ Status: in development. See `docs/roadmap.md` for what works today.
   without a restart. The interface is in English, Russian, Ukrainian and Polish.
 - Launches at login if you want it to, and opens from a global shortcut.
 
+## Install
+
+Download the disk image from the [latest release](https://github.com/shumer/iCalendar/releases/latest),
+open it and drag MenuCal into Applications. Releases are signed with a Developer ID and notarised.
+From then on the app updates itself: when a newer release exists, its menu opens with
+"Update to ..." as the first line.
+
 ## Build
 
 Requirements: macOS 14 or later and the Swift 6 toolchain. The Command Line Tools are enough;
@@ -47,4 +54,8 @@ XCTest nor swift-testing. The reasons are in `docs/adr/0001-spm-only-toolchain.m
 | `Sources/MenuCal` | the app: status item, panel, settings, design tokens |
 | `Sources/MenuCalTests` | the suite |
 | `Resources/Localizations` | one `.lproj` per language |
+| `Resources/AppIcon` | the iconset, drawn by `Scripts/make-icon.swift` |
+| `Scripts` | icon, disk image and notarisation helpers |
 | `docs/DesignSpec.md` | the design contract; `Design/Tokens.swift` mirrors it |
+| `docs/release.md` | how a release is cut and what the workflow does |
+| `docs/manual-checklist.md` | what was checked by hand and what never was |
