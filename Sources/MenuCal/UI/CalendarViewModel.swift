@@ -13,11 +13,14 @@ final class CalendarViewModel {
   }
 
   let preferences: Preferences
+  let holidays: HolidayStore
 
   private(set) var state: CalendarState
   private(set) var grid: MonthGrid
   private(set) var today: Date
   private(set) var footerText = ""
+  /// The short date and the name of the holiday, when the selected day is one.
+  private(set) var selectedHoliday: (date: String, name: String)?
   /// The keyboard focus ring appears with the first key press, as it does in AppKit lists.
   private(set) var showsFocusRing = false
   var hoveredDay: Date?
@@ -27,11 +30,13 @@ final class CalendarViewModel {
   @ObservationIgnored private var locale: Locale
   @ObservationIgnored private var formatters: GridFormatters
   @ObservationIgnored private var footerFormatter = DateFormatter()
+  @ObservationIgnored private var shortFooterFormatter = DateFormatter()
   @ObservationIgnored private var scroll = ScrollAccumulator()
   @ObservationIgnored private let now: () -> Date
 
-  init(preferences: Preferences, now: @escaping () -> Date = Date.init) {
+  init(preferences: Preferences, holidays: HolidayStore, now: @escaping () -> Date = Date.init) {
     self.preferences = preferences
+    self.holidays = holidays
     self.now = now
     let calendar = Self.systemCalendar(preferences)
     let locale = Locale.autoupdatingCurrent
@@ -49,6 +54,21 @@ final class CalendarViewModel {
       for: moment, today: moment, calendar: calendar, locale: locale, formatters: formatters)
     rebuildFooterFormatter()
     rebuild()
+    trackHolidays()
+  }
+
+  /// A holiday list that arrived, or a holiday setting that changed, redraws the grid.
+  private func trackHolidays() {
+    withObservationTracking {
+      _ = holidays.revision
+      _ = preferences.marksHolidays
+      _ = preferences.holidayCountry
+    } onChange: { [weak self] in
+      Task { @MainActor in
+        self?.rebuild()
+        self?.trackHolidays()
+      }
+    }
   }
 
   // MARK: Layout
@@ -221,10 +241,26 @@ final class CalendarViewModel {
   }
 
   private func rebuild() {
+    let provider = holidayCalendar()
     grid = CalendarEngine.makeGrid(
       for: state.displayedMonth, today: today, calendar: calendar, locale: locale,
-      formatters: formatters)
+      formatters: formatters, indicatorProvider: provider)
     footerText = footerFormatter.string(from: state.selectedDate)
+    selectedHoliday = provider?.name(on: state.selectedDate, calendar: calendar).map {
+      (shortFooterFormatter.string(from: state.selectedDate), $0)
+    }
+  }
+
+  private func holidayCalendar() -> HolidayCalendar? {
+    guard preferences.marksHolidays,
+      let country = HolidayPolicy.country(override: preferences.holidayCountry, locale: locale)
+    else { return nil }
+    // Names come in the country's language and in English; English speakers get the latter.
+    let prefersLocal = Locale.preferredLanguages.first?.hasPrefix("en") != true
+    return holidays.holidays(
+      country: country,
+      years: HolidayPolicy.years(around: state.displayedMonth, calendar: calendar),
+      prefersLocalNames: prefersLocal)
   }
 
   private func rebuildFooterFormatter() {
@@ -234,6 +270,13 @@ final class CalendarViewModel {
     formatter.timeZone = calendar.timeZone
     formatter.dateStyle = .full
     footerFormatter = formatter
+
+    let short = DateFormatter()
+    short.calendar = calendar
+    short.locale = locale
+    short.timeZone = calendar.timeZone
+    short.setLocalizedDateFormatFromTemplate("EdMMM")
+    shortFooterFormatter = short
   }
 
   private static func systemCalendar(_ preferences: Preferences) -> Calendar {

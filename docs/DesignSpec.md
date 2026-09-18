@@ -16,7 +16,8 @@ this file; when the two disagree, this file wins and the code is the bug.
 | Toolchain | SwiftPM only, no Xcode project, see `docs/adr/0001-spm-only-toolchain.md` |
 
 Not part of v1, by design: the month and year quick picker (NAV-4 of the brief, concept A does
-not have one), events, reminders, time zones.
+not have one), events, reminders, time zones. Public holidays were added after 0.1 at the
+customer's request.
 
 ## 2. Container
 
@@ -92,6 +93,7 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | `text.primary` | `labelColor` |
 | `text.weekend`, `text.secondary` | `secondaryLabelColor` |
 | `text.adjacentMonth`, `text.weekNumber` | `tertiaryLabelColor` |
+| `text.holiday` | `systemRed` |
 | `accent` | `controlAccentColor` |
 | `text.onAccent` | `white` |
 | `fill.hover`, `fill.footer`, `fill.navCapsule` | `quaternarySystemFill` |
@@ -107,6 +109,7 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | Normal | primary text |
 | Weekend | secondary text, only while "Highlight weekends" is on; decided by `Calendar.isDateInWeekend` |
 | Adjacent month | tertiary text, clickable, a click also moves to that month |
+| Public holiday | `text.holiday`; at 45% opacity in an adjacent month. The name is the cell's tooltip and part of its VoiceOver label |
 | Hover | `fill.hover` circle |
 | Pressed | `fill.pressed` circle, scale 0.94 on the circle only, the hit area does not move |
 | Selected | 1.5 pt accent ring inside the circle, semibold |
@@ -116,7 +119,8 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | Keyboard focus | 3 pt `focus` ring, 1 pt outside the circle, drawn over every other state |
 
 Today and selected differ by shape and by weight, not by colour alone (Differentiate Without
-Colour). Text colour priority: today > selected > adjacent > weekend > normal.
+Colour). Text colour priority: today > holiday > adjacent > weekend > normal; a selected day keeps
+the colour it had.
 
 The grid is always 6 rows of 7. A sixth row that the month does not need holds the next month's
 days in the adjacent style. September 2026 with Monday first is the reference case.
@@ -177,6 +181,11 @@ The status item's width is never animated.
   gesture starts after the previous one ended, momentum is ignored. A wheel without phases gets a
   250 ms cooldown. The horizontal swipe uses the same threshold, and the dominant axis is decided
   after 8 pt.
+- The footer shows the full date. When the selected day is a public holiday it shows a short
+  date, a middle dot and the holiday's name in `text.holiday`; the date comes first so that a
+  long name is what gets truncated.
+- Public holidays are official days off for the whole country of the system region, or of the
+  country picked in settings. See `docs/adr/0004-public-holidays.md`.
 - Midnight, a time zone change and waking from sleep recompute today. A date the user picked stays
   where it is; a selection that was only following today moves with it.
 - RTL: leading and trailing everywhere, chevrons and the slide direction mirror.

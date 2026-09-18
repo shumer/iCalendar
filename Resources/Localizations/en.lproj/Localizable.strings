@@ -93,3 +93,9 @@
 "updates.error.check" = "Could not check for updates. Try again later.";
 "updates.error.untrusted" = "The download is not signed by the developer of this copy, so it was not installed.";
 "updates.error.install" = "The update could not be installed.";
+
+"settings.holidays.toggle" = "Mark public holidays in red";
+"settings.holidays.country" = "Country";
+"settings.holidays.country.system" = "System region (%@)";
+"settings.holidays.country.systemUnknown" = "System region (no holiday list)";
+"settings.holidays.note" = "Only official days off for the whole country. The list comes from date.nager.at about once a month; nothing but the country code is sent.";

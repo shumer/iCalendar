@@ -135,6 +135,20 @@ func preferencesTests(_ run: TestRun) {
     t.expectEqual(HotkeyModifiers([.command, .control, .shift, .option]).symbols, "⌃⌥⇧⌘")
   }
 
+  run.test("holiday marking is on by default, follows the system region, and ignores unknown countries") { t in
+    let defaults = scratchDefaults()
+    let preferences = Preferences(defaults: defaults)
+    t.expect(preferences.marksHolidays)
+    t.expectEqual(preferences.holidayCountry, nil)
+    preferences.marksHolidays = false
+    preferences.holidayCountry = "UA"
+    let reread = Preferences(defaults: defaults)
+    t.expect(!reread.marksHolidays)
+    t.expectEqual(reread.holidayCountry, "UA")
+    defaults.set("Atlantis", forKey: "holidays.country")
+    t.expectEqual(Preferences(defaults: defaults).holidayCountry, nil)
+  }
+
   run.test("the fallback is the last pattern that worked") { t in
     let preferences = Preferences(defaults: scratchDefaults())
     preferences.lastValidPattern = "d MMM"

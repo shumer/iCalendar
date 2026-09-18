@@ -2,17 +2,23 @@ import Foundation
 
 // MARK: - Model
 
-/// A marker under a day. v1 has no provider, so the list is always empty; the type exists so
-/// that events in a later version do not force the grid to be rewritten.
+/// Something the grid knows about a day beyond its date. The brief reserved this for events;
+/// public holidays are its first use.
 public struct DayIndicator: Equatable, Sendable {
-  public let identifier: String
+  public enum Kind: Equatable, Sendable {
+    case publicHoliday
+  }
 
-  public init(identifier: String) {
-    self.identifier = identifier
+  public let kind: Kind
+  public let title: String
+
+  public init(kind: Kind, title: String) {
+    self.kind = kind
+    self.title = title
   }
 }
 
-/// The extension point for events. Nothing in v1 implements it.
+/// The extension point for whatever marks days: `HolidayCalendar` today, events some day.
 public protocol IndicatorProvider {
   func indicators(for day: Date, calendar: Calendar) -> [DayIndicator]
 }
@@ -28,6 +34,11 @@ public struct DayCellModel: Identifiable, Equatable, Sendable {
   public let isWeekend: Bool
   public let accessibilityLabel: String
   public let indicators: [DayIndicator]
+
+  /// The name of the public holiday on this day, if it is one.
+  public var holidayName: String? {
+    indicators.first { $0.kind == .publicHoliday }?.title
+  }
 }
 
 public struct WeekRow: Identifiable, Equatable, Sendable {
@@ -145,6 +156,10 @@ public enum CalendarEngine {
       days.reserveCapacity(daysPerWeek)
       for column in 0..<daysPerWeek {
         let date = day(gridStart, offsetBy: row * daysPerWeek + column, calendar: calendar)
+        let indicators = indicatorProvider?.indicators(for: date, calendar: calendar) ?? []
+        // VoiceOver hears the holiday with the date, since red text says nothing to it.
+        let spoken = ([formatters.accessibility.string(from: date)] + indicators.map(\.title))
+          .joined(separator: ", ")
         days.append(
           DayCellModel(
             id: date,
@@ -153,8 +168,8 @@ public enum CalendarEngine {
             isInCurrentMonth: calendar.isDate(date, equalTo: monthStart, toGranularity: .month),
             isToday: calendar.isDate(date, inSameDayAs: today),
             isWeekend: calendar.isDateInWeekend(date),
-            accessibilityLabel: formatters.accessibility.string(from: date),
-            indicators: indicatorProvider?.indicators(for: date, calendar: calendar) ?? []))
+            accessibilityLabel: spoken,
+            indicators: indicators))
       }
       let weekOfYear = calendar.component(.weekOfYear, from: days[0].date)
       weeks.append(

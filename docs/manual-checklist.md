@@ -36,6 +36,14 @@ macOS 14, 15 and 27 were not available and count as unchecked.
 - `./build.sh` end to end, `plutil -lint`, the SDK stamp, the disk image mounts with the app and
   the Applications link.
 
+## Watched on 2026-09-18, after 0.1
+
+- Region `ru_PL`: the list for Poland is fetched on launch and cached; 1 and 11 November 2026 and
+  1 and 6 January 2027 are red, so the second year is fetched when the grid reaches it.
+- Selecting 11 November shows "Ср, 11 нояб. · Narodowe Święto Niepodległości" in the footer, the
+  name in red.
+- A first launch puts the status item beside Control Center.
+
 ## Never watched
 
 - Keyboard navigation and scrolling in the panel, end to end.
@@ -44,5 +52,6 @@ macOS 14, 15 and 27 were not available and count as unchecked.
 - Launch at login after a reboot.
 - A real self update from one notarised release to the next.
 - The release workflow itself: it needs the five secrets and a published tag.
+- Holidays with the network off, with another country picked, and turned off in settings.
 - Performance numbers of section 6.5 in Instruments.
 - A full VoiceOver pass with the screen reader on.

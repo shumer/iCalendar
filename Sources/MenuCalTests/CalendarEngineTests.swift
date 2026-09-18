@@ -61,7 +61,7 @@ func calendarEngineTests(_ run: TestRun) {
           t.expectEqual(result.weekdaySymbols.count, 7)
           t.expect(days.allSatisfy { !$0.dayNumber.isEmpty && !$0.accessibilityLabel.isEmpty })
           t.expect(!result.monthName.isEmpty && !result.yearText.isEmpty && !result.monthTitle.isEmpty)
-          t.expect(days.allSatisfy { $0.indicators.isEmpty }, "v1 has no indicators")
+          t.expect(days.allSatisfy { $0.indicators.isEmpty }, "no provider, no indicators")
         }
       }
     }
@@ -269,7 +269,7 @@ func calendarEngineTests(_ run: TestRun) {
       var calls = 0
       func indicators(for day: Date, calendar: Calendar) -> [DayIndicator] {
         calls += 1
-        return [DayIndicator(identifier: "dot")]
+        return [DayIndicator(kind: .publicHoliday, title: "Holiday")]
       }
     }
     let provider = Counting()
@@ -279,7 +279,8 @@ func calendarEngineTests(_ run: TestRun) {
       for: date, today: date, calendar: calendar, locale: calendar.locale!,
       indicatorProvider: provider)
     t.expectEqual(provider.calls, 42)
-    t.expect(result.days.allSatisfy { $0.indicators == [DayIndicator(identifier: "dot")] })
+    t.expect(result.days.allSatisfy { $0.holidayName == "Holiday" })
+    t.expect(result.days.allSatisfy { $0.accessibilityLabel.hasSuffix(", Holiday") })
   }
 
   run.test("shared formatters give the same grid as fresh ones") { t in

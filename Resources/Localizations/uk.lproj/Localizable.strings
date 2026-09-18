@@ -93,3 +93,9 @@
 "updates.error.check" = "Не вдалося перевірити оновлення. Спробуйте пізніше.";
 "updates.error.untrusted" = "Завантаження підписане не тим розробником, що ця копія, тому його не встановлено.";
 "updates.error.install" = "Не вдалося встановити оновлення.";
+
+"settings.holidays.toggle" = "Позначати офіційні свята червоним";
+"settings.holidays.country" = "Країна";
+"settings.holidays.country.system" = "Регіон системи (%@)";
+"settings.holidays.country.systemUnknown" = "Регіон системи (списку свят немає)";
+"settings.holidays.note" = "Лише офіційні вихідні для всієї країни. Список завантажується з date.nager.at приблизно раз на місяць, передається лише код країни.";

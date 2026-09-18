@@ -39,6 +39,9 @@
 - **After 0.1.** A first launch puts the item at the right end of the menu bar, beside Control
   Center, where it reads as the date half of the system clock.
 
+- **After 0.1.** Official public holidays of the system region, or of a country picked in
+  settings, are red in the grid, named in the tooltip, in VoiceOver and in the footer. ADR 0004.
+
 ## Next
 
 - Publish the first release once the five secrets are in the repository, and watch the run end
