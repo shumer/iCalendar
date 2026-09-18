@@ -109,7 +109,6 @@ final class PanelController {
     let rise = Motion.isReduced ? 0 : Motion.panelRise
     panel.setFrame(target.offsetBy(dx: 0, dy: rise), display: true)
     panel.alphaValue = 0
-    panel.hasShadow = background.wantsWindowShadow
     panel.makeKeyAndOrderFront(nil)
     panel.invalidateShadow()
     NSAnimationContext.runAnimationGroup { context in

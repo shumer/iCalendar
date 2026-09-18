@@ -48,6 +48,9 @@ macOS 14, 15 and 27 were not available and count as unchecked.
   redrew at once, so settings do apply to an open panel. With the switch on weekends are red, with
   it off they look like any other day.
 
+- The panel's edge over a white window and over a dark one: a hairline rim and a soft shadow
+  that follow the rounded shape, as on system menus, and nothing square in the corners.
+
 ## Never watched
 
 - Keyboard navigation and scrolling in the panel, end to end.

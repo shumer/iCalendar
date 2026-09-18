@@ -10,10 +10,6 @@ final class GlassBackgroundView: NSView {
   private var surface: NSView?
   private var observer: NSObjectProtocol?
 
-  /// Glass brings its own shadow and rim. The window shadow on top of it is computed from the
-  /// window's rectangle and shows as a square outline around the rounded glass.
-  private(set) var wantsWindowShadow = true
-
   var cornerRadius: CGFloat {
     didSet { if cornerRadius != oldValue { rebuild() } }
   }
@@ -22,6 +18,15 @@ final class GlassBackgroundView: NSView {
     self.content = content
     self.cornerRadius = cornerRadius
     super.init(frame: .zero)
+    // The window is a rectangle and the surface is not. Whatever a surface draws outside its
+    // rounded shape, glass draws a shadow of its own there, would show in the four corners as
+    // pieces of a square, and the window shadow would then follow that square. Clipping the
+    // content to the shape makes the window's alpha the shape, so the system draws its shadow
+    // and its hairline rim around the rounded panel, as it does for menus.
+    wantsLayer = true
+    layer?.masksToBounds = true
+    layer?.cornerCurve = .continuous
+    layer?.cornerRadius = cornerRadius
     rebuild()
     observer = NSWorkspace.shared.notificationCenter.addObserver(
       forName: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification,
@@ -42,7 +47,7 @@ final class GlassBackgroundView: NSView {
 
     let workspace = NSWorkspace.shared
     let newSurface: NSView
-    wantsWindowShadow = true
+    layer?.cornerRadius = cornerRadius
     if workspace.accessibilityDisplayShouldReduceTransparency {
       newSurface = Self.opaqueSurface(
         cornerRadius: cornerRadius, outlined: workspace.accessibilityDisplayShouldIncreaseContrast)
@@ -52,7 +57,6 @@ final class GlassBackgroundView: NSView {
       glass.cornerRadius = cornerRadius
       glass.contentView = content
       newSurface = glass
-      wantsWindowShadow = false
     } else {
       newSurface = Self.materialSurface(cornerRadius: cornerRadius)
       embed(content, in: newSurface)
@@ -62,7 +66,6 @@ final class GlassBackgroundView: NSView {
     newSurface.autoresizingMask = [.width, .height]
     addSubview(newSurface)
     surface = newSurface
-    window?.hasShadow = wantsWindowShadow
     window?.invalidateShadow()
   }
 
