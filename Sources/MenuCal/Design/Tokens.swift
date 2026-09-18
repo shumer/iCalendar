@@ -1,4 +1,5 @@
 import AppKit
+import MenuCalCore
 import SwiftUI
 
 /// The numbers of docs/DesignSpec.md, section 3. When the two disagree the spec wins.
@@ -32,6 +33,13 @@ struct Metrics: Equatable, Sendable {
       + sectionSpacing + gridHeight
     if showsFooter { height += sectionSpacing + footerHeight }
     return CGSize(width: width, height: height)
+  }
+
+  static func metrics(for density: Density) -> Metrics {
+    switch density {
+    case .regular: .regular
+    case .compact: .compact
+    }
   }
 
   static let regular = Metrics(
@@ -77,4 +85,53 @@ enum Tokens {
     static let panelClosed: CGFloat = 0.92
     static let todayPulse: CGFloat = 1.18
   }
+}
+
+/// DesignSpec section 4. System fonts only.
+struct Typography: Equatable, Sendable {
+  let monthSize: CGFloat
+  let todayButtonSize: CGFloat
+  let weekdaySize: CGFloat
+  let daySize: CGFloat
+  let weekNumberSize: CGFloat
+  let footerSize: CGFloat
+  let chevronSize: CGFloat
+
+  var month: Font { .system(size: monthSize, weight: .semibold) }
+  var year: Font { .system(size: monthSize, weight: .regular) }
+  var todayButton: Font { .system(size: todayButtonSize, weight: .medium) }
+  var weekday: Font { .system(size: weekdaySize, weight: .semibold) }
+  var weekNumber: Font { .system(size: weekNumberSize, weight: .medium).monospacedDigit() }
+  var footer: Font { .system(size: footerSize, weight: .medium) }
+  var chevron: Font { .system(size: chevronSize, weight: .semibold) }
+
+  func day(isToday: Bool, isSelected: Bool) -> Font {
+    let weight: Font.Weight = isToday ? .bold : (isSelected ? .semibold : .regular)
+    return .system(size: daySize, weight: weight).monospacedDigit()
+  }
+
+  static func typography(for density: Density) -> Typography {
+    switch density {
+    case .regular:
+      Typography(
+        monthSize: 17, todayButtonSize: 12, weekdaySize: 11, daySize: 14, weekNumberSize: 10,
+        footerSize: 12, chevronSize: 11)
+    case .compact:
+      Typography(
+        monthSize: 15, todayButtonSize: 11, weekdaySize: 10, daySize: 12, weekNumberSize: 9,
+        footerSize: 11, chevronSize: 10)
+    }
+  }
+}
+
+/// DesignSpec section 5. Semantic colours only, so light, dark and the accent follow the system.
+enum Palette {
+  static let primary = Color(nsColor: .labelColor)
+  static let secondary = Color(nsColor: .secondaryLabelColor)
+  static let tertiary = Color(nsColor: .tertiaryLabelColor)
+  static let onAccent = Color.white
+  static let hoverFill = Color(nsColor: .quaternarySystemFill)
+  static let pressedFill = Color(nsColor: .tertiarySystemFill)
+  static let separator = Color(nsColor: .separatorColor)
+  static let focus = Color(nsColor: .keyboardFocusIndicatorColor)
 }

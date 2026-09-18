@@ -135,7 +135,7 @@ days in the adjacent style. September 2026 with Monday first is the reference ca
 
 | Event | Animation | Detail |
 |---|---|---|
-| Panel opens | `spring(response: 0.30, dampingFraction: 0.82)` | scale 0.92 to 1 and opacity, anchored top centre |
+| Panel opens | 0.18 s, cubic bezier (0.2, 0.9, 0.3, 1) | opacity 0 to 1 while the panel settles 6 pt down from the menu bar. Glass is drawn by the window server and cannot be scaled with its content, so there is no scale |
 | Panel closes | ease out, 0.12 s | opacity only |
 | Month changes | `spring(response: 0.24, dampingFraction: 0.90)` | directional slide of 28 pt with a fade, forward moves left; mirrored in RTL |
 | Back to today | the month slide in the chronological direction, then `spring(response: 0.28, dampingFraction: 0.65)` | one transition, never a run through the months; the today circle pulses 1 to 1.18 to 1 |

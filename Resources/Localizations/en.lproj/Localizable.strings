@@ -19,3 +19,10 @@
 "settings.general.launchAtLogin" = "Launch at login";
 "settings.general.needsApproval" = "Allow MenuCal in System Settings to finish turning this on.";
 "settings.general.openLoginItems" = "Open Login Items…";
+
+"navigation.today" = "Today";
+"navigation.previousMonth" = "Previous month";
+"navigation.nextMonth" = "Next month";
+"accessibility.today" = "Today";
+"accessibility.week" = "Week %d";
+"accessibility.selectedDate" = "Selected: %@";
