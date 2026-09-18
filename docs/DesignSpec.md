@@ -133,7 +133,7 @@ days in the adjacent style. September 2026 with Monday first is the reference ca
 | macOS 14 and 15 | `NSVisualEffectView`, material `.popover`, blending `.behindWindow`, state `.active`, masked to the same continuous radius |
 | Reduce Transparency | `surface.opaque`, no blur |
 | Increase Contrast | 1 pt border in `separatorColor` around the panel, selected ring 2 pt, adjacent month uses `secondaryLabelColor` |
-| Shadow | glass brings its own shadow and rim, so the window shadow is off on it: computed from the window rectangle, it shows as a square outline around the rounded glass. The material and opaque fallbacks use the system window shadow. No custom shadow anywhere |
+| Shadow and rim | the system window shadow, which also draws the hairline rim that menus have. The window is a rectangle and the surface is not, so the content is clipped to the continuous rounded shape: what a surface draws outside it, glass casts a shadow of its own there, would otherwise show in the corners as pieces of a square, and the window shadow would follow that square. No custom shadow anywhere |
 
 ## 8. Motion
 
