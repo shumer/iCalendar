@@ -97,6 +97,16 @@ func calendarStateTests(_ run: TestRun) {
     t.expect(remembered.lastDirection == .none, "opening never slides")
   }
 
+  run.test("a month restored after a relaunch is shown without a slide") { t in
+    var state = CalendarState(now: now, calendar: calendar)
+    state.restoreDisplayedMonth(Fixtures.date(2027, 2, 14, in: calendar), calendar: calendar)
+    t.expectEqual(state.displayedMonth, day(2027, 2, 1))
+    t.expectEqual(state.selectedDate, day(2026, 9, 18))
+    t.expectEqual(state.focusedDate, day(2027, 2, 1))
+    t.expect(state.lastDirection == .none)
+    t.expectEqual(state.monthChangeCount, 0)
+  }
+
   run.test("at midnight a selection that follows today moves with it") { t in
     var state = CalendarState(now: Fixtures.date(2026, 9, 30, 23, 59, in: calendar), calendar: calendar)
     state.clockChanged(now: Fixtures.date(2026, 10, 1, 0, 0, 5, in: calendar), calendar: calendar)

@@ -1,5 +1,6 @@
 import AppKit
 import MenuCalCore
+import Observation
 
 /// Draws the menu bar item and keeps its text current. The text changes on a timer aligned to
 /// the unit the format shows, so a date only format wakes the app once a day.
@@ -7,7 +8,8 @@ import MenuCalCore
 final class StatusItemController: NSObject, NSMenuDelegate {
   private let statusItem: NSStatusItem
   private let contextMenu = NSMenu()
-  private var formatter = DateFormatter()
+  private let preferences: Preferences
+  private var cache = FormatterCache(calendar: .current, locale: .autoupdatingCurrent)
   private var timer: Timer?
   private var lastTitle = ""
   private var wantsHighlight = false
@@ -17,7 +19,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
   var onOpenSettings: (() -> Void)?
   var onOpenAbout: (() -> Void)?
 
-  override init() {
+  init(preferences: Preferences) {
+    self.preferences = preferences
     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     super.init()
 
@@ -39,9 +42,27 @@ final class StatusItemController: NSObject, NSMenuDelegate {
       return event
     }
 
-    rebuildFormatter()
     refresh()
-    observeSystemChanges()
+    trackPreferences()
+  }
+
+  /// The locale, the time zone, the clock or the day changed: every cached formatter is stale.
+  func systemChanged() {
+    cache.reset(calendar: .current, locale: .autoupdatingCurrent)
+    refresh()
+  }
+
+  private func trackPreferences() {
+    withObservationTracking {
+      _ = preferences.formatPreset
+      _ = preferences.customPattern
+      _ = preferences.lastValidPattern
+    } onChange: { [weak self] in
+      Task { @MainActor in
+        self?.refresh()
+        self?.trackPreferences()
+      }
+    }
   }
 
   /// Keeps the button highlighted while the panel is open, the way system items do. The button
@@ -64,18 +85,17 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
   // MARK: - Text
 
-  private func rebuildFormatter() {
-    let fresh = DateFormatter()
-    fresh.locale = .autoupdatingCurrent
-    fresh.calendar = .autoupdatingCurrent
-    fresh.timeZone = .autoupdatingCurrent
-    fresh.setLocalizedDateFormatFromTemplate("EdMMM")
-    formatter = fresh
+  private var pattern: String {
+    let pattern = preferences.menuBarPattern(locale: cache.locale)
+    return FormatValidator.isValid(pattern) ? pattern : preferences.fallbackPattern(locale: cache.locale)
   }
 
   private func refresh() {
     let now = Date()
-    let title = formatter.string(from: now)
+    let title = MenuBarText.render(
+      pattern: preferences.menuBarPattern(locale: cache.locale),
+      fallbackPattern: preferences.fallbackPattern(locale: cache.locale),
+      date: now, cache: cache)
     // The item's width follows its title, so the title is touched only when it changed.
     if title != lastTitle, let button = statusItem.button {
       button.attributedTitle = NSAttributedString(
@@ -87,36 +107,15 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
   private func scheduleNextRefresh(after now: Date) {
     timer?.invalidate()
-    let granularity = RefreshSchedule.granularity(ofPattern: formatter.dateFormat ?? "")
+    let granularity = RefreshSchedule.granularity(ofPattern: pattern)
     let fireDate = RefreshSchedule.nextFire(
-      after: now, granularity: granularity, calendar: .autoupdatingCurrent)
+      after: now, granularity: granularity, calendar: cache.calendar)
     let next = Timer(fire: fireDate, interval: 0, repeats: false) { [weak self] _ in
       MainActor.assumeIsolated { self?.refresh() }
     }
     next.tolerance = RefreshSchedule.tolerance(for: granularity)
     RunLoop.main.add(next, forMode: .common)
     timer = next
-  }
-
-  private func observeSystemChanges() {
-    let rebuild: @Sendable (Notification) -> Void = { [weak self] _ in
-      MainActor.assumeIsolated {
-        self?.rebuildFormatter()
-        self?.refresh()
-      }
-    }
-    let center = NotificationCenter.default
-    for name in [
-      NSLocale.currentLocaleDidChangeNotification,
-      .NSSystemTimeZoneDidChange,
-      .NSSystemClockDidChange,
-      .NSCalendarDayChanged,
-    ] {
-      center.addObserver(forName: name, object: nil, queue: .main, using: rebuild)
-    }
-    // A timer set before a long sleep fires late or not at all, so waking refreshes by hand.
-    NSWorkspace.shared.notificationCenter.addObserver(
-      forName: NSWorkspace.didWakeNotification, object: nil, queue: .main, using: rebuild)
   }
 
   // MARK: - Clicks

@@ -44,6 +44,14 @@ public struct CalendarState: Equatable, Sendable {
     focusedDate = focusAnchor(calendar: calendar)
   }
 
+  /// Puts back the month that was on screen when the app last quit. Not a navigation, so it
+  /// does not slide.
+  public mutating func restoreDisplayedMonth(_ date: Date, calendar: Calendar) {
+    displayedMonth = CalendarEngine.startOfMonth(for: date, calendar: calendar)
+    lastDirection = .none
+    focusedDate = focusAnchor(calendar: calendar)
+  }
+
   // MARK: Months
 
   public mutating func showMonth(byAdding months: Int, calendar: Calendar) {

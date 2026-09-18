@@ -5,12 +5,33 @@ import SwiftUI
 /// in the calendar while the frontmost app keeps its menu bar.
 final class CalendarPanel: NSPanel {
   var onCancel: (() -> Void)?
+  /// Returns true when the key was handled.
+  var onKey: ((NSEvent) -> Bool)?
+  var onScroll: ((NSEvent) -> Void)?
 
   override var canBecomeKey: Bool { true }
   override var canBecomeMain: Bool { false }
 
   override func cancelOperation(_ sender: Any?) {
     onCancel?()
+  }
+
+  override func keyDown(with event: NSEvent) {
+    if event.keyCode == 53 {
+      onCancel?()
+      return
+    }
+    // Keys that mean nothing here are dropped quietly; the default is the system beep.
+    _ = onKey?(event)
+  }
+
+  override func performKeyEquivalent(with event: NSEvent) -> Bool {
+    if event.modifierFlags.contains(.command), onKey?(event) == true { return true }
+    return super.performKeyEquivalent(with: event)
+  }
+
+  override func scrollWheel(with event: NSEvent) {
+    onScroll?(event)
   }
 }
 
@@ -26,6 +47,14 @@ final class PanelController {
 
   /// Called with the new state whenever the panel opens or closes.
   var onVisibilityChange: ((Bool) -> Void)?
+  var onKey: ((NSEvent) -> Bool)? {
+    get { panel.onKey }
+    set { panel.onKey = newValue }
+  }
+  var onScroll: ((NSEvent) -> Void)? {
+    get { panel.onScroll }
+    set { panel.onScroll = newValue }
+  }
 
   var isOpen: Bool { panel.isVisible && !isClosing }
 
@@ -74,15 +103,20 @@ final class PanelController {
     anchorButton = button
     isClosing = false
 
-    panel.setFrame(frame(for: size, under: anchorWindow), display: true)
+    // Glass is drawn by the window server and cannot be scaled with its content, so the panel
+    // fades in and settles down from the menu bar instead. Under Reduce Motion it only fades.
+    let target = frame(for: size, under: anchorWindow)
+    let rise = Motion.isReduced ? 0 : Motion.panelRise
+    panel.setFrame(target.offsetBy(dx: 0, dy: rise), display: true)
     panel.alphaValue = 0
     panel.hasShadow = background.wantsWindowShadow
     panel.makeKeyAndOrderFront(nil)
     panel.invalidateShadow()
     NSAnimationContext.runAnimationGroup { context in
-      context.duration = 0.18
-      context.timingFunction = CAMediaTimingFunction(name: .easeOut)
+      context.duration = Motion.panelOpenDuration
+      context.timingFunction = CAMediaTimingFunction(controlPoints: 0.2, 0.9, 0.3, 1)
       panel.animator().alphaValue = 1
+      panel.animator().setFrame(target, display: true)
     }
     installMonitors()
     onVisibilityChange?(true)
@@ -94,7 +128,7 @@ final class PanelController {
     removeMonitors()
     onVisibilityChange?(false)
     NSAnimationContext.runAnimationGroup { context in
-      context.duration = 0.12
+      context.duration = Motion.panelCloseDuration
       context.timingFunction = CAMediaTimingFunction(name: .easeOut)
       panel.animator().alphaValue = 0
     } completionHandler: { [weak self] in

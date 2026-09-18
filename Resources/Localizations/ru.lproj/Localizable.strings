@@ -19,3 +19,10 @@
 "settings.general.launchAtLogin" = "Запускать при входе в систему";
 "settings.general.needsApproval" = "Разрешите MenuCal в Системных настройках, чтобы включить автозапуск.";
 "settings.general.openLoginItems" = "Открыть объекты входа…";
+
+"navigation.today" = "Сегодня";
+"navigation.previousMonth" = "Предыдущий месяц";
+"navigation.nextMonth" = "Следующий месяц";
+"accessibility.today" = "Сегодня";
+"accessibility.week" = "Неделя %d";
+"accessibility.selectedDate" = "Выбрано: %@";
