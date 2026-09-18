@@ -63,6 +63,15 @@ enum Fixtures {
     return calendar
   }
 
+  static func calendar(
+    _ identifier: Calendar.Identifier, locale: String, timeZone: String = "Europe/Warsaw"
+  ) -> Calendar {
+    var calendar = Calendar(identifier: identifier)
+    calendar.timeZone = TimeZone(identifier: timeZone)!
+    calendar.locale = Locale(identifier: locale)
+    return calendar
+  }
+
   static func date(
     _ year: Int, _ month: Int, _ day: Int,
     _ hour: Int = 12, _ minute: Int = 0, _ second: Int = 0,
