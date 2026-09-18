@@ -1,0 +1,21 @@
+"statusItem.accessibilityLabel" = "MenuCal, calendar";
+"panel.accessibilityLabel" = "Calendar";
+
+"menu.settings" = "Settings…";
+"menu.about" = "About MenuCal";
+"menu.quit" = "Quit MenuCal";
+"menu.edit" = "Edit";
+"menu.edit.undo" = "Undo";
+"menu.edit.redo" = "Redo";
+"menu.edit.cut" = "Cut";
+"menu.edit.copy" = "Copy";
+"menu.edit.paste" = "Paste";
+"menu.edit.selectAll" = "Select All";
+"menu.window" = "Window";
+"menu.window.close" = "Close";
+"menu.window.minimize" = "Minimize";
+
+"settings.general" = "General";
+"settings.general.launchAtLogin" = "Launch at login";
+"settings.general.needsApproval" = "Allow MenuCal in System Settings to finish turning this on.";
+"settings.general.openLoginItems" = "Open Login Items…";
