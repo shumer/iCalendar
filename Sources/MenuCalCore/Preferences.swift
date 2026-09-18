@@ -75,6 +75,7 @@ public final class Preferences {
     static let usesCustomAccent = "appearance.usesCustomAccent"
     static let customAccent = "appearance.customAccent"
     static let checksForUpdates = "updates.automatic"
+    static let hotkey = "hotkey.togglePanel"
   }
 
   /// The stored value for "the pattern is hand written".
@@ -136,6 +137,17 @@ public final class Preferences {
     didSet { defaults.set(checksForUpdatesAutomatically, forKey: Key.checksForUpdates) }
   }
 
+  /// The global shortcut that opens the panel. Nil means none is assigned, which is the default.
+  public var hotkey: Hotkey? {
+    didSet {
+      if let hotkey {
+        defaults.set(hotkey.storedValue, forKey: Key.hotkey)
+      } else {
+        defaults.removeObject(forKey: Key.hotkey)
+      }
+    }
+  }
+
   /// Reads what is stored and falls back, key by key, to the default for anything missing or
   /// unreadable. A first launch and a value written by a newer version look the same here.
   public init(defaults: UserDefaults = .standard) {
@@ -148,16 +160,23 @@ public final class Preferences {
       defaults.object(forKey: key) as? Bool ?? fallback
     }
 
+    // A hand written pattern that no longer validates gives way to the last one that did, and
+    // only when there is none to a preset: the menu bar never shows an empty or broken item.
     let presetValue = defaults.string(forKey: Key.formatPreset)
     let custom = defaults.string(forKey: Key.customPattern) ?? ""
+    let storedLastValid = defaults.string(forKey: Key.lastValidPattern) ?? ""
+    let lastValid = FormatValidator.isValid(storedLastValid) ? storedLastValid : ""
     if presetValue == Self.customPresetMarker, FormatValidator.isValid(custom) {
       formatPreset = nil
+      customPattern = custom
+    } else if presetValue == Self.customPresetMarker, !lastValid.isEmpty {
+      formatPreset = nil
+      customPattern = lastValid
     } else {
       formatPreset = presetValue.flatMap { FormatPreset(rawValue: $0) } ?? .dateAndWeekday
+      customPattern = custom
     }
-    customPattern = custom
-    let lastValid = defaults.string(forKey: Key.lastValidPattern) ?? ""
-    lastValidPattern = FormatValidator.isValid(lastValid) ? lastValid : ""
+    lastValidPattern = lastValid
 
     menuBarIcon = stored(Key.menuBarIcon, MenuBarIcon.none)
     firstWeekday = stored(Key.firstWeekday, FirstWeekdayPreference.system)
@@ -178,6 +197,7 @@ public final class Preferences {
       customAccent = AccentComponents(red: 0, green: 0.478, blue: 1)
     }
     checksForUpdatesAutomatically = flag(Key.checksForUpdates, true)
+    hotkey = (defaults.array(forKey: Key.hotkey) as? [Int]).flatMap { Hotkey(storedValue: $0) }
   }
 
   /// The pattern the menu bar shows: the preset resolved for the locale, or the hand written one.

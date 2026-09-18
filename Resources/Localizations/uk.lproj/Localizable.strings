@@ -1,0 +1,83 @@
+"statusItem.accessibilityLabel" = "MenuCal, календар";
+"panel.accessibilityLabel" = "Календар";
+
+"menu.settings" = "Параметри…";
+"menu.about" = "Про MenuCal";
+"menu.quit" = "Завершити MenuCal";
+"menu.edit" = "Редагування";
+"menu.edit.undo" = "Відмінити";
+"menu.edit.redo" = "Повторити";
+"menu.edit.cut" = "Вирізати";
+"menu.edit.copy" = "Скопіювати";
+"menu.edit.paste" = "Вставити";
+"menu.edit.selectAll" = "Вибрати все";
+"menu.window" = "Вікно";
+"menu.window.close" = "Закрити";
+"menu.window.minimize" = "Згорнути";
+
+"navigation.today" = "Сьогодні";
+"navigation.previousMonth" = "Попередній місяць";
+"navigation.nextMonth" = "Наступний місяць";
+"accessibility.today" = "Сьогодні";
+"accessibility.week" = "Тиждень %d";
+"accessibility.selectedDate" = "Вибрано: %@";
+
+"settings.general" = "Загальні";
+"settings.calendar" = "Календар";
+"settings.appearance" = "Вигляд";
+"settings.about" = "Про програму";
+
+"settings.format.section" = "Формат у смузі меню";
+"settings.format.presets" = "Шаблони";
+"settings.format.preset.dateOnly" = "Лише дата";
+"settings.format.preset.dateAndWeekday" = "Дата + день тижня";
+"settings.format.preset.dateAndTime" = "Дата + час";
+"settings.format.preset.compact" = "Компактний";
+"settings.format.preset.full" = "Повний";
+"settings.format.pattern" = "Шаблон формату";
+"settings.format.preview" = "Перегляд";
+"settings.format.error.empty" = "Шаблон порожній.";
+"settings.format.error.quote" = "Лапку не закрито.";
+"settings.format.error.unsupported" = "Поле «%@» не підтримується.";
+"settings.format.error.tooLong" = "Поле «%@» повторено забагато разів.";
+"settings.format.error.keeps" = "У смузі меню лишається останній робочий формат.";
+"settings.format.clockHint" = "Системний годинник програма сховати не може. Це робиться в Системних параметрах.";
+"settings.format.openClock" = "Відкрити параметри годинника…";
+
+"settings.icon" = "Іконка у смузі меню";
+"settings.icon.none" = "Немає";
+"settings.icon.calendar" = "Календар";
+"settings.icon.dayNumber" = "З числом";
+"settings.general.launchAtLogin" = "Запускати під час входу";
+"settings.general.needsApproval" = "Дозвольте MenuCal у Системних параметрах, щоб увімкнути автозапуск.";
+"settings.general.openLoginItems" = "Відкрити об’єкти входу…";
+"settings.hotkey" = "Глобальне сполучення клавіш";
+"settings.hotkey.record" = "Записати сполучення";
+"settings.hotkey.recording" = "Натисніть сполучення…";
+"settings.hotkey.clear" = "Прибрати сполучення";
+"settings.hotkey.refused" = "Це сполучення зайняте системою або іншою програмою.";
+
+"settings.calendar.firstWeekday" = "Перший день тижня";
+"settings.calendar.firstWeekday.system" = "Системний";
+"settings.calendar.weekNumbers" = "Показувати номери тижнів";
+"settings.calendar.fullDate" = "Показувати рядок із повною датою";
+"settings.calendar.weekends" = "Виділяти вихідні";
+"settings.calendar.reopen" = "Під час відкриття";
+"settings.calendar.reopen.current" = "Завжди поточний місяць";
+"settings.calendar.reopen.last" = "Пам’ятати останній переглянутий";
+
+"settings.appearance.theme" = "Тема";
+"settings.appearance.theme.system" = "Системна";
+"settings.appearance.theme.light" = "Світла";
+"settings.appearance.theme.dark" = "Темна";
+"settings.appearance.accent" = "Акцентний колір";
+"settings.appearance.accent.system" = "Системний";
+"settings.appearance.accent.custom" = "Власний";
+"settings.appearance.accent.color" = "Колір";
+"settings.appearance.density" = "Щільність";
+"settings.appearance.density.regular" = "Звичайна";
+"settings.appearance.density.compact" = "Компактна";
+
+"settings.about.version" = "Версія %@ (%@)";
+"settings.about.tagline" = "Календар у смузі меню.";
+"settings.about.source" = "Вихідний код на GitHub";

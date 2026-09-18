@@ -15,14 +15,69 @@
 "menu.window.close" = "Close";
 "menu.window.minimize" = "Minimize";
 
-"settings.general" = "General";
-"settings.general.launchAtLogin" = "Launch at login";
-"settings.general.needsApproval" = "Allow MenuCal in System Settings to finish turning this on.";
-"settings.general.openLoginItems" = "Open Login Items…";
-
 "navigation.today" = "Today";
 "navigation.previousMonth" = "Previous month";
 "navigation.nextMonth" = "Next month";
 "accessibility.today" = "Today";
 "accessibility.week" = "Week %d";
 "accessibility.selectedDate" = "Selected: %@";
+
+"settings.general" = "General";
+"settings.calendar" = "Calendar";
+"settings.appearance" = "Appearance";
+"settings.about" = "About";
+
+"settings.format.section" = "Menu bar format";
+"settings.format.presets" = "Presets";
+"settings.format.preset.dateOnly" = "Date only";
+"settings.format.preset.dateAndWeekday" = "Date + weekday";
+"settings.format.preset.dateAndTime" = "Date + time";
+"settings.format.preset.compact" = "Compact";
+"settings.format.preset.full" = "Full";
+"settings.format.pattern" = "Pattern";
+"settings.format.preview" = "Preview";
+"settings.format.error.empty" = "The pattern is empty.";
+"settings.format.error.quote" = "A quote is not closed.";
+"settings.format.error.unsupported" = "The field “%@” is not supported.";
+"settings.format.error.tooLong" = "The field “%@” is repeated too many times.";
+"settings.format.error.keeps" = "The menu bar keeps the last format that worked.";
+"settings.format.clockHint" = "The system clock cannot be hidden by an app. It is set in System Settings.";
+"settings.format.openClock" = "Open Clock Settings…";
+
+"settings.icon" = "Menu bar icon";
+"settings.icon.none" = "None";
+"settings.icon.calendar" = "Calendar";
+"settings.icon.dayNumber" = "Day number";
+"settings.general.launchAtLogin" = "Launch at login";
+"settings.general.needsApproval" = "Allow MenuCal in System Settings to finish turning this on.";
+"settings.general.openLoginItems" = "Open Login Items…";
+"settings.hotkey" = "Global shortcut";
+"settings.hotkey.record" = "Record Shortcut";
+"settings.hotkey.recording" = "Type shortcut…";
+"settings.hotkey.clear" = "Remove shortcut";
+"settings.hotkey.refused" = "This shortcut is taken by the system or another app.";
+
+"settings.calendar.firstWeekday" = "First day of week";
+"settings.calendar.firstWeekday.system" = "System";
+"settings.calendar.weekNumbers" = "Show week numbers";
+"settings.calendar.fullDate" = "Show the full date line";
+"settings.calendar.weekends" = "Highlight weekends";
+"settings.calendar.reopen" = "When opened";
+"settings.calendar.reopen.current" = "Always show the current month";
+"settings.calendar.reopen.last" = "Remember the last viewed month";
+
+"settings.appearance.theme" = "Theme";
+"settings.appearance.theme.system" = "System";
+"settings.appearance.theme.light" = "Light";
+"settings.appearance.theme.dark" = "Dark";
+"settings.appearance.accent" = "Accent colour";
+"settings.appearance.accent.system" = "System";
+"settings.appearance.accent.custom" = "Custom";
+"settings.appearance.accent.color" = "Colour";
+"settings.appearance.density" = "Density";
+"settings.appearance.density.regular" = "Regular";
+"settings.appearance.density.compact" = "Compact";
+
+"settings.about.version" = "Version %@ (%@)";
+"settings.about.tagline" = "A calendar in the menu bar.";
+"settings.about.source" = "Source code on GitHub";

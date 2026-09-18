@@ -61,6 +61,13 @@ final class CalendarViewModel {
       showsWeekNumbers: preferences.showsWeekNumbers, showsFooter: preferences.showsFullDate)
   }
 
+  /// The system accent, or the colour picked in Appearance settings.
+  var accent: Color {
+    guard preferences.usesCustomAccent else { return .accentColor }
+    let custom = preferences.customAccent
+    return Color(.sRGB, red: custom.red, green: custom.green, blue: custom.blue)
+  }
+
   var isShowingCurrentMonth: Bool {
     state.isShowingCurrentMonth(now: today, calendar: calendar)
   }

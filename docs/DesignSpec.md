@@ -153,7 +153,9 @@ The status item's width is never animated.
 - The default is text only, format template `E d MMM` resolved for the locale.
 - The item shows the highlighted state while the panel is open.
 - Left click toggles the panel. Right click and Control-click open the context menu: Settings,
-  About, Check for Updates, Quit.
+  About, Quit; Check for Updates joins them with the updater in Stage 5.
+- The button leaves about 2 pt between its image and its title, so the icon image carries the
+  other 2 pt as transparent space at its trailing edge.
 
 ## 10. Behaviour
 
