@@ -6,15 +6,23 @@ import SwiftUI
 /// is the system Settings look and can be opened from an AppKit menu in an agent app.
 @MainActor
 final class SettingsWindowController: NSWindowController {
+  /// In the order of the tabs.
+  enum Pane: Int {
+    case general, calendar, appearance, about
+  }
+
   private let tabs = SettingsTabViewController()
 
-  init(preferences: Preferences, format: FormatEditorModel, hotkey: HotkeyRecorderModel, loginItem: LoginItemModel) {
+  init(
+    preferences: Preferences, format: FormatEditorModel, hotkey: HotkeyRecorderModel,
+    loginItem: LoginItemModel, updater: Updater
+  ) {
     tabs.tabStyle = .toolbar
     tabs.addTabViewItem(
       Self.tab(symbol: "gearshape", GeneralPane(preferences: preferences, format: format, hotkey: hotkey, loginItem: loginItem)))
     tabs.addTabViewItem(Self.tab(symbol: "calendar", CalendarPane(preferences: preferences)))
     tabs.addTabViewItem(Self.tab(symbol: "paintbrush", AppearancePane(preferences: preferences)))
-    tabs.addTabViewItem(Self.tab(symbol: "info.circle", AboutPane()))
+    tabs.addTabViewItem(Self.tab(symbol: "info.circle", AboutPane(updater: updater)))
 
     let window = NSWindow(contentViewController: tabs)
     window.styleMask = [.titled, .closable, .miniaturizable]
@@ -29,6 +37,10 @@ final class SettingsWindowController: NSWindowController {
   @available(*, unavailable)
   required init?(coder: NSCoder) {
     fatalError("init(coder:) is not used")
+  }
+
+  func select(_ pane: Pane) {
+    tabs.selectedTabViewItemIndex = pane.rawValue
   }
 
   /// Tab labels are plain AppKit strings, so a language change has to be pushed into them.

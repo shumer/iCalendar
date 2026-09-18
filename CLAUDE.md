@@ -48,7 +48,15 @@ Then, before writing the commit:
 - **`./build.sh` is the only thing that assembles the app**, locally and in CI alike. It signs
   with `CODESIGN_IDENTITY` when one is set, with the Developer ID in the keychain when it is not,
   and ad-hoc with `CODESIGN_IDENTITY=-`.
-- **Nothing is built on a push.** The release workflow runs when a release is published.
+- **Nothing is built on a push.** `.github/workflows/release.yml` runs when a release is
+  published, builds that tag's commit, signs, hardens, notarises, staples, packs a zip and a disk
+  image and writes the install notes itself. See `docs/release.md`.
+- **The updater trusts the signature, not the feed.** A download replaces the app only when it
+  has the same bundle identifier and Developer ID team as the running copy and is newer. Do not
+  relax any of the three, and keep the asset URL pinned to this repository's releases.
+- **The zip asset is named `MenuCal-<version>-<build>.zip`.** The updater looks for that shape;
+  rename it in the workflow and in `ReleaseFeed` together or not at all.
+- **No sandbox, no entitlements, no third party code**: ADR 0002 and ADR 0003.
 - **Versions.** `VERSION` is the marketing number, bumped by hand. The build number is
   `git rev-list --count HEAD`.
 

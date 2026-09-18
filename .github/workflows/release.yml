@@ -1,0 +1,176 @@
+name: Release
+
+# Publishing a release on GitHub builds the app and attaches it, so the tag and the download can
+# never disagree about what is in it. Nothing is built on a push: a build nobody asked for is a
+# build nobody checks.
+#
+# With the signing secrets in place the build is signed with a Developer ID, hardened, notarised
+# and stapled, and macOS opens it as it is. Without them it is ad-hoc signed, and the install
+# notes say what to do about that. Which of the two happened is decided once, at the top, and
+# every later step reads it.
+on:
+  release:
+    types: [published]
+  # And by hand, for a rebuild against a tag that already exists.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to attach the build to
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    # The runner decides how the released app looks: macOS picks the era of chrome and materials
+    # from the SDK the binary was stamped with. Pinned, so an image update cannot change the app.
+    runs-on: macos-26
+    env:
+      # A secret cannot be read in an `if`; an env var set from one can. Empty secrets compare
+      # equal to the empty string, so a repository without them takes the ad-hoc path.
+      HAS_SIGNING: ${{ secrets.DEVELOPER_ID_P12 != '' && secrets.NOTARY_KEY_P8 != '' }}
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The tag's commit, on a manual run as well as on a publish. A dispatch would otherwise
+          # build whatever main is at and attach it to a tag that does not name it.
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          # build.sh takes the build number from the commit count, so a shallow clone would
+          # produce a build number of one.
+          fetch-depth: 0
+
+      - name: Swift version
+        run: swift --version
+
+      - name: The tag matches the VERSION file
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          if [ "v$VERSION" != "$TAG" ] && [ "$VERSION" != "$TAG" ]; then
+            echo "::error::the tag is $TAG but VERSION says $VERSION; the app would report the wrong version and offer itself as an update forever"
+            exit 1
+          fi
+
+      # The suite runs first and the build stops if it fails: shipping a release with broken
+      # core logic is worse than not shipping one.
+      - name: Tests
+        run: ./run-tests.sh
+
+      # A keychain of its own, thrown away with the runner. The identity's SHA-1 is what build.sh
+      # signs with, so no team id or certificate name has to be typed anywhere.
+      - name: Import the signing certificate
+        if: env.HAS_SIGNING == 'true'
+        env:
+          P12_BASE64: ${{ secrets.DEVELOPER_ID_P12 }}
+          P12_PASSWORD: ${{ secrets.DEVELOPER_ID_P12_PASSWORD }}
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+          CERTIFICATE="$RUNNER_TEMP/certificate.p12"
+          # A secret pasted with a trailing newline is the commonest way a right password is
+          # wrong, and `security` reports it as a wrong passphrase with no further hint.
+          P12_PASSWORD="$(printf '%s' "$P12_PASSWORD" | tr -d '\r\n')"
+          printf '%s' "$P12_BASE64" | tr -d '\r\n ' | base64 --decode > "$CERTIFICATE"
+
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$CERTIFICATE" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" login.keychain-db
+          rm "$CERTIFICATE"
+
+          IDENTITY="$(security find-identity -v -p codesigning "$KEYCHAIN" | grep 'Developer ID Application' | head -1 | awk '{print $2}')"
+          if [ -z "$IDENTITY" ]; then
+            echo "::error::the certificate holds no Developer ID Application identity"
+            exit 1
+          fi
+          echo "CODESIGN_IDENTITY=$IDENTITY" >> "$GITHUB_ENV"
+
+      - name: Ad-hoc signing for a repository without secrets
+        if: env.HAS_SIGNING != 'true'
+        run: echo "CODESIGN_IDENTITY=-" >> "$GITHUB_ENV"
+
+      # Tests already ran; build.sh would otherwise run them a second time. It signs with
+      # CODESIGN_IDENTITY as the steps above set it.
+      - name: Build
+        run: ./build.sh --skip-tests --no-install
+
+      # Apple looks at the build and says whether it may open without a warning; the ticket is
+      # then stapled to the bundle so the answer travels with it and works offline.
+      - name: Notarise the app
+        if: env.HAS_SIGNING == 'true'
+        env:
+          NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
+          NOTARY_ISSUER_ID: ${{ secrets.NOTARY_ISSUER_ID }}
+          NOTARY_KEY_P8: ${{ secrets.NOTARY_KEY_P8 }}
+        run: Scripts/notarise.sh MenuCal.app
+
+      - name: Package
+        id: package
+        run: |
+          VERSION="$(tr -d '[:space:]' < VERSION)"
+          BUILD="$(git rev-list --count HEAD)"
+          ZIP="MenuCal-${VERSION}-${BUILD}.zip"
+          DMG="MenuCal-${VERSION}.dmg"
+          # The zip is what the app's own updater downloads; the image is for people. Both are
+          # made after stapling, so the app inside each carries its ticket.
+          ditto -c -k --keepParent MenuCal.app "$ZIP"
+          Scripts/make-dmg.sh MenuCal.app "$DMG"
+          echo "zip=$ZIP" >> "$GITHUB_OUTPUT"
+          echo "dmg=$DMG" >> "$GITHUB_OUTPUT"
+
+      - name: Notarise the disk image
+        if: env.HAS_SIGNING == 'true'
+        env:
+          NOTARY_KEY_ID: ${{ secrets.NOTARY_KEY_ID }}
+          NOTARY_ISSUER_ID: ${{ secrets.NOTARY_ISSUER_ID }}
+          NOTARY_KEY_P8: ${{ secrets.NOTARY_KEY_P8 }}
+        run: Scripts/notarise.sh "${{ steps.package.outputs.dmg }}"
+
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shasum -a 256 "${{ steps.package.outputs.zip }}" "${{ steps.package.outputs.dmg }}"
+          gh release upload "$TAG" "${{ steps.package.outputs.zip }}" "${{ steps.package.outputs.dmg }}" --clobber
+
+      # Written by the workflow rather than by hand, because it names the files it has just built
+      # and knows whether they were notarised. Typed into the notes by a person, it is one release
+      # away from being wrong, and wrong here means somebody's download will not open.
+      - name: Say how to install it
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DMG: ${{ steps.package.outputs.dmg }}
+          ZIP: ${{ steps.package.outputs.zip }}
+        run: |
+          # Everything from the marker down is ours, so re-running on the same tag replaces the
+          # section rather than stacking a second copy under the first.
+          gh release view "$TAG" --json body -q .body \
+            | sed '/<!-- menucal-install -->/,$d' > notes.md
+          SHA="$(shasum -a 256 "$DMG" | awk '{print $1}')"
+
+          # printf rather than a heredoc: inside a YAML block every line is indented, including
+          # the delimiter, and an indented delimiter does not end a heredoc.
+          {
+            printf '\n<!-- menucal-install -->\n\n---\n\n## Installing\n\n'
+            if [ "$HAS_SIGNING" = "true" ]; then
+              printf 'Open `%s` and drag MenuCal into Applications. The build is signed with a ' "$DMG"
+              printf 'Developer ID and notarised by Apple, so macOS opens it as it is. From here on '
+              printf 'the app updates itself: when a newer release exists, its menu opens with '
+              printf '**Update to …** as the first line.\n'
+            else
+              printf 'The build is ad-hoc signed and not notarised, so macOS quarantines it on '
+              printf 'download and will not open it on the first try.\n\n'
+              printf '**Without a terminal.** Open `%s`, drag MenuCal into Applications, then ' "$DMG"
+              printf 'right-click it there and choose Open, and Open again in the dialog.\n\n'
+              printf '**With a terminal:**\n\n'
+              printf '```\n'
+              printf 'ditto -x -k ~/Downloads/%s /Applications && xattr -dr com.apple.quarantine /Applications/MenuCal.app && open /Applications/MenuCal.app\n' "$ZIP"
+              printf '```\n'
+            fi
+            printf '\n`%s` sha256: `%s`\n' "$DMG" "$SHA"
+          } >> notes.md
+
+          gh release edit "$TAG" --notes-file notes.md
