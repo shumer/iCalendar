@@ -36,6 +36,9 @@
   by a script, a Homebrew cask, `docs/release.md`, `docs/manual-checklist.md`, ADR 0003 on why
   the app is not sandboxed.
 
+- **After 0.1.** A first launch puts the item at the right end of the menu bar, beside Control
+  Center, where it reads as the date half of the system clock.
+
 ## Next
 
 - Publish the first release once the five secrets are in the repository, and watch the run end

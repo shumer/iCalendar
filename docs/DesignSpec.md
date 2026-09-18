@@ -150,7 +150,12 @@ The status item's width is never animated.
 - Height comes from `NSStatusBar.system.thickness`, never from a constant per OS version.
 - Optional icon to the left of the text, 4 pt gap: SF Symbol `calendar`, or a drawn calendar
   outline with today's day number. Both are template images.
-- The default is text only, format template `E d MMM` resolved for the locale.
+- The default is text only, format template `E d MMM` resolved for the locale, which reads
+  "Пт, 18 сент." in Russian: the date the system clock can then leave out, with the time left to
+  the clock, so that the menu bar does not show two clocks.
+- On a first launch the item takes the rightmost place macOS gives a third party item, beside
+  Control Center. Nothing can go to the right of Control Center and the clock. After that the
+  place is wherever the user Command-drags it.
 - The item shows the highlighted state while the panel is open.
 - Left click toggles the panel. Right click and Control-click open the context menu: Settings,
   About, Quit; Check for Updates joins them with the updater in Stage 5.
