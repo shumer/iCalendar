@@ -17,8 +17,10 @@ no exception, so it cannot load unsigned code, use JIT memory or read `DYLD_` va
 ## What limits the app instead
 
 - It reads nothing of the user's: no files, no contacts, no calendars, no location.
-- Its only network request is a GET to the releases API of its own repository, and a download
-  from the same repository's releases when the user agrees to update. The feed is not trusted;
+- It makes two kinds of network request. One is a GET to the releases API of its own
+  repository, and a download from the same repository's releases when the user agrees to update.
+  The other, added by ADR 0004, is a GET for a country's public holidays that carries a country
+  code and a year. The feed is not trusted;
   the downloaded app must carry the same bundle identifier and the same Developer ID team as the
   running one, and be newer, before it replaces anything.
 - The global shortcut uses the Carbon hot key API, which needs no accessibility permission.

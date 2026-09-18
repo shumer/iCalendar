@@ -78,6 +78,7 @@ enum Tokens {
 
   enum Opacity {
     static let todayInAdjacentMonth: Double = 0.55
+    static let holidayInAdjacentMonth: Double = 0.45
   }
 
   enum Scale {
@@ -130,6 +131,7 @@ enum Palette {
   static let secondary = Color(nsColor: .secondaryLabelColor)
   static let tertiary = Color(nsColor: .tertiaryLabelColor)
   static let onAccent = Color.white
+  static let holiday = Color(nsColor: .systemRed)
   static let hoverFill = Color(nsColor: .quaternarySystemFill)
   static let pressedFill = Color(nsColor: .tertiarySystemFill)
   static let separator = Color(nsColor: .separatorColor)

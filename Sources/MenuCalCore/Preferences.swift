@@ -77,6 +77,8 @@ public final class Preferences {
     static let checksForUpdates = "updates.automatic"
     static let hotkey = "hotkey.togglePanel"
     static let lastUpdateCheck = "updates.lastCheck"
+    static let marksHolidays = "holidays.enabled"
+    static let holidayCountry = "holidays.country"
   }
 
   /// The stored value for "the pattern is hand written".
@@ -149,6 +151,20 @@ public final class Preferences {
     }
   }
 
+  public var marksHolidays: Bool {
+    didSet { defaults.set(marksHolidays, forKey: Key.marksHolidays) }
+  }
+  /// A two letter country code, or nil to follow the region of the system.
+  public var holidayCountry: String? {
+    didSet {
+      if let holidayCountry {
+        defaults.set(holidayCountry, forKey: Key.holidayCountry)
+      } else {
+        defaults.removeObject(forKey: Key.holidayCountry)
+      }
+    }
+  }
+
   public var lastUpdateCheck: Date? {
     didSet {
       if let lastUpdateCheck {
@@ -209,6 +225,9 @@ public final class Preferences {
     }
     checksForUpdatesAutomatically = flag(Key.checksForUpdates, true)
     hotkey = (defaults.array(forKey: Key.hotkey) as? [Int]).flatMap { Hotkey(storedValue: $0) }
+    marksHolidays = flag(Key.marksHolidays, true)
+    holidayCountry = defaults.string(forKey: Key.holidayCountry)
+      .flatMap { HolidayFeed.supportedCountries.contains($0) ? $0 : nil }
     lastUpdateCheck = (defaults.object(forKey: Key.lastUpdateCheck) as? Double)
       .map { Date(timeIntervalSinceReferenceDate: $0) }
   }

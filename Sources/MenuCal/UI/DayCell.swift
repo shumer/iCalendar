@@ -32,6 +32,7 @@ struct DayCell: View {
         typography: model.typography))
     .focusable(false)
     .onHover { model.hover(day.id, isInside: $0) }
+    .help(day.holidayName ?? "")
     .accessibilityLabel(day.accessibilityLabel)
     .accessibilityValue(day.isToday ? L("accessibility.today") : "")
     .accessibilityAddTraits(isSelected ? [.isSelected] : [])
@@ -105,6 +106,9 @@ private struct DayCellStyle: ButtonStyle {
 
   private var textColor: Color {
     if day.isToday { return Palette.onAccent }
+    if day.holidayName != nil {
+      return Palette.holiday.opacity(day.isInCurrentMonth ? 1 : Tokens.Opacity.holidayInAdjacentMonth)
+    }
     if !day.isInCurrentMonth { return isHighContrast ? Palette.secondary : Palette.tertiary }
     if day.isWeekend && highlightsWeekends { return Palette.secondary }
     return Palette.primary

@@ -93,3 +93,9 @@
 "updates.error.check" = "Не удалось проверить обновления. Попробуйте позже.";
 "updates.error.untrusted" = "Загрузка подписана не тем разработчиком, что эта копия, поэтому она не установлена.";
 "updates.error.install" = "Не удалось установить обновление.";
+
+"settings.holidays.toggle" = "Отмечать официальные праздники красным";
+"settings.holidays.country" = "Страна";
+"settings.holidays.country.system" = "Регион системы (%@)";
+"settings.holidays.country.systemUnknown" = "Регион системы (списка праздников нет)";
+"settings.holidays.note" = "Только официальные нерабочие дни для всей страны. Список загружается с date.nager.at примерно раз в месяц, передаётся только код страны.";

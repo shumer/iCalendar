@@ -22,7 +22,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     NSApp.mainMenu = MainMenu.make(target: self)
     applyAppearance()
 
-    let model = CalendarViewModel(preferences: preferences)
+    let model = CalendarViewModel(preferences: preferences, holidays: HolidayStore())
     let panel = PanelController(content: CalendarPanelView(model: model))
     let status = StatusItemController(preferences: preferences)
 

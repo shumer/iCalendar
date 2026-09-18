@@ -93,3 +93,9 @@
 "updates.error.check" = "Nie udało się sprawdzić uaktualnień. Spróbuj później.";
 "updates.error.untrusted" = "Pobrany plik nie jest podpisany przez twórcę tej kopii, więc nie został zainstalowany.";
 "updates.error.install" = "Nie udało się zainstalować uaktualnienia.";
+
+"settings.holidays.toggle" = "Oznaczaj święta państwowe na czerwono";
+"settings.holidays.country" = "Kraj";
+"settings.holidays.country.system" = "Region systemu (%@)";
+"settings.holidays.country.systemUnknown" = "Region systemu (brak listy świąt)";
+"settings.holidays.note" = "Tylko oficjalne dni wolne w całym kraju. Lista jest pobierana z date.nager.at mniej więcej raz w miesiącu, wysyłany jest tylko kod kraju.";

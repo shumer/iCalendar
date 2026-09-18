@@ -2,7 +2,7 @@
 
 A calendar in the macOS menu bar. It shows the date the way you want it and opens a month grid
 under it, in the Liquid Glass language of macOS 26 and later, with a material fallback down to
-macOS 14. No events, no accounts, no network: a date and a calendar, finished properly.
+macOS 14. No events and no accounts: a date and a calendar, finished properly.
 
 Status: in development. See `docs/roadmap.md` for what works today.
 
@@ -12,6 +12,8 @@ Status: in development. See `docs/roadmap.md` for what works today.
   Unicode pattern with a live preview, with an optional calendar or day number icon.
 - Opens a month grid under it: keyboard, scroll and swipe navigation, week numbers, a full date
   line, weekends, a Compact density, light and dark, the system accent or your own.
+- Marks the official public holidays of your country in red, by the region of the system or a
+  country you pick. The list comes from date.nager.at about once a month and can be turned off.
 - Follows the system language, region, first weekday, calendar and time zone as they change,
   without a restart. The interface is in English, Russian, Ukrainian and Polish.
 - Launches at login if you want it to, and opens from a global shortcut.
