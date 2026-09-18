@@ -1,0 +1,21 @@
+"statusItem.accessibilityLabel" = "MenuCal, календарь";
+"panel.accessibilityLabel" = "Календарь";
+
+"menu.settings" = "Настройки…";
+"menu.about" = "О программе MenuCal";
+"menu.quit" = "Завершить MenuCal";
+"menu.edit" = "Правка";
+"menu.edit.undo" = "Отменить";
+"menu.edit.redo" = "Повторить";
+"menu.edit.cut" = "Вырезать";
+"menu.edit.copy" = "Скопировать";
+"menu.edit.paste" = "Вставить";
+"menu.edit.selectAll" = "Выбрать все";
+"menu.window" = "Окно";
+"menu.window.close" = "Закрыть";
+"menu.window.minimize" = "Свернуть";
+
+"settings.general" = "Основные";
+"settings.general.launchAtLogin" = "Запускать при входе в систему";
+"settings.general.needsApproval" = "Разрешите MenuCal в Системных настройках, чтобы включить автозапуск.";
+"settings.general.openLoginItems" = "Открыть объекты входа…";

@@ -1,0 +1,7 @@
+.build/
+.swiftpm/
+MenuCal.app/
+*.zip
+*.dmg
+.DS_Store
+default.profraw

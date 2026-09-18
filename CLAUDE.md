@@ -12,9 +12,12 @@ month names, days per month).
 ## Before every commit - not optional
 
 ```bash
-./run-tests.sh          # must end with no failures
-swift build 2>&1 | grep "warning:"   # must print nothing
+./run-tests.sh                                                        # must end with no failures
+swift build 2>&1 | grep "warning:" | grep -v "ld: warning: search path"   # must print nothing
 ```
+
+The linker's "search path not found" lines are the Command Line Tools looking for Xcode folders
+that do not exist here. They are not ours and do not appear on the CI runner.
 
 Then, before writing the commit:
 

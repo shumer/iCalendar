@@ -5,10 +5,12 @@
 - **Stage 0, design.** Four concepts on the design canvas, concept A approved, numbers fixed in
   `docs/DesignSpec.md`, toolchain decision in ADR 0001.
 
+- **Stage 1, skeleton.** SwiftPM package, status item with a locale aware date that refreshes at
+  midnight, an empty glass panel that closes on Esc and outside clicks, a settings window with
+  launch at login, `LSUIElement`, `build.sh`, the test harness.
+
 ## Next
 
-- **Stage 1, skeleton.** SwiftPM package, status item, empty glass panel, launch at login,
-  `LSUIElement`, `build.sh`.
 - **Stage 2, engine.** `CalendarEngine` and `DateFormatting` with the test matrix of locales and
   calendars.
 - **Stage 3, calendar UI.** The panel per the DesignSpec: navigation, keyboard, scroll, motion,

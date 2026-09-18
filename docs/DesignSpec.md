@@ -129,7 +129,7 @@ days in the adjacent style. September 2026 with Monday first is the reference ca
 | macOS 14 and 15 | `NSVisualEffectView`, material `.popover`, blending `.behindWindow`, state `.active`, masked to the same continuous radius |
 | Reduce Transparency | `surface.opaque`, no blur |
 | Increase Contrast | 1 pt border in `separatorColor` around the panel, selected ring 2 pt, adjacent month uses `secondaryLabelColor` |
-| Shadow | the system window shadow of the panel; no custom shadow |
+| Shadow | glass brings its own shadow and rim, so the window shadow is off on it: computed from the window rectangle, it shows as a square outline around the rounded glass. The material and opaque fallbacks use the system window shadow. No custom shadow anywhere |
 
 ## 8. Motion
 
@@ -178,8 +178,10 @@ The status item's width is never animated.
 
 ## 11. Settings window
 
-The SwiftUI `Settings` scene with four panes: General, Calendar, Appearance, About. Grouped form
-style, the system window chrome, nothing custom in it. Every change applies immediately. The
+An `NSTabViewController` in the toolbar style with four SwiftUI panes: General, Calendar,
+Appearance, About. Grouped form style, the system window chrome, nothing custom in it. The
+window is ordered front by itself as well as through activation, because an agent app's request
+to activate can be refused. Every change applies immediately. The
 format field shows a live preview of the menu bar item and keeps the last valid format when the
 pattern is invalid; the field is outlined in the system red and a one line message explains why.
 
@@ -198,7 +200,10 @@ pattern is invalid; the field is outlined in the system red and a one line messa
    `.lproj/Localizable.strings` tables for en, ru, uk and pl.
 6. Section 8 asks for XCTest style unit tests. Without Xcode there is no XCTest and no
    swift-testing, so the suite is an executable target run by `./run-tests.sh`.
-7. SwiftUI's `@State` is a macro from the macOS 27 SDK on, and its plugin ships only with Xcode.
+7. Section 4.6 asks for the SwiftUI `Settings` scene. It cannot be opened from an AppKit menu
+   in an agent app without private selectors, so the window is AppKit's toolbar style tab
+   controller hosting SwiftUI panes, which is the same look.
+8. SwiftUI's `@State` is a macro from the macOS 27 SDK on, and its plugin ships only with Xcode.
    View state lives in `@Observable` models owned by the AppKit controllers.
 
 ## 13. Visual acceptance
