@@ -51,14 +51,26 @@ macOS 14, 15 and 27 were not available and count as unchecked.
 - The panel's edge over a white window and over a dark one: a hairline rim and a soft shadow
   that follow the rounded shape, as on system menus, and nothing square in the corners.
 
+## The release chain, watched on 2026-09-18
+
+- `release.yml` ran green for 0.1, 0.2 and 0.3: the tag check, the suite, the Developer ID
+  signature, notarisation and stapling of the app, the zip and the disk image, notarisation of
+  the image, the install notes.
+- A real self update, 0.2 (21) to 0.3 (24), on the customer's Mac: the app found the release,
+  offered "Update to 0.3", and after the click downloaded the zip, checked the signature against
+  its own, replaced itself in `/Applications` and relaunched as 0.3.
+- The copy it installed: `spctl` answers `accepted, source=Notarized Developer ID`, `stapler
+  validate` passes, the hardened runtime flag is set, there is no quarantine attribute, and the
+  binary is stamped `minos 14.0`, `sdk 26.5`.
+
 ## Never watched
 
 - Keyboard navigation and scrolling in the panel, end to end.
 - Recording a global shortcut and firing it.
 - Settings other than the weekend switch flipped while the panel is open.
 - Launch at login after a reboot.
-- A real self update from one notarised release to the next.
-- The release workflow itself: it needs the five secrets and a published tag.
+- An update the signature check has to refuse: a download signed by another team, or an older
+  version. The refusal has unit tests for the feed and none for the signature.
 - Holidays with the network off, with another country picked, and turned off in settings.
 - Performance numbers of section 6.5 in Instruments.
 - A full VoiceOver pass with the screen reader on.

@@ -2,6 +2,9 @@
 
 ## Done
 
+- **User guide.** README with installation, everyday use, shortcuts, settings, updates and
+  offline behaviour, plus real screenshots of the light and dark calendar and Appearance pane.
+
 - **Stage 0, design.** Four concepts on the design canvas, concept A approved, numbers fixed in
   `docs/DesignSpec.md`, toolchain decision in ADR 0001.
 
@@ -44,8 +47,8 @@
 
 ## Next
 
-- Publish the first release once the five secrets are in the repository, and watch the run end
-  to end before trusting it. Then go through `docs/manual-checklist.md`.
+- Go through what `docs/manual-checklist.md` lists as never watched: keyboard and scroll in the
+  panel, the shortcut recorder, launch at login after a reboot, a VoiceOver pass, Instruments.
 
 ## Open questions
 
