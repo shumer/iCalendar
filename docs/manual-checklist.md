@@ -63,6 +63,16 @@ macOS 14, 15 and 27 were not available and count as unchecked.
   validate` passes, the hardened runtime flag is set, there is no quarantine attribute, and the
   binary is stamped `minos 14.0`, `sdk 26.5`.
 
+## Vacation, watched on 2026-09-23
+
+- Click on the 23rd and Shift-click on the 30th: rings on every day between, the footer becomes
+  the action bar with Cancel and Vacation.
+- Vacation pressed: the green band runs Wednesday to Sunday and Monday to Wednesday on the next
+  row, weekend numbers stay red on it, today's circle keeps a green rim, and the list is written
+  to `Application Support/MenuCal/vacation.json`.
+- A click on a vacation day shows its date and "Vacation" with a Remove button.
+- Calendar settings list the range with a name field and a delete button.
+
 ## Never watched
 
 - Keyboard navigation and scrolling in the panel, end to end.
@@ -71,6 +81,8 @@ macOS 14, 15 and 27 were not available and count as unchecked.
 - Launch at login after a reboot.
 - An update the signature check has to refuse: a download signed by another team, or an older
   version. The refusal has unit tests for the feed and none for the signature.
+- Vacation from the keyboard (Shift-arrows) and from the right-click menu; renaming and
+  deleting a vacation in settings; a range across the month's edge.
 - Holidays with the network off, with another country picked, and turned off in settings.
 - Performance numbers of section 6.5 in Instruments.
 - A full VoiceOver pass with the screen reader on.

@@ -5,6 +5,8 @@ import SwiftUI
 /// in the calendar while the frontmost app keeps its menu bar.
 final class CalendarPanel: NSPanel {
   var onCancel: (() -> Void)?
+  /// Asked before Esc closes the panel; true means Esc did something else instead.
+  var onEscape: (() -> Bool)?
   /// Returns true when the key was handled.
   var onKey: ((NSEvent) -> Bool)?
   var onScroll: ((NSEvent) -> Void)?
@@ -13,12 +15,13 @@ final class CalendarPanel: NSPanel {
   override var canBecomeMain: Bool { false }
 
   override func cancelOperation(_ sender: Any?) {
+    if onEscape?() == true { return }
     onCancel?()
   }
 
   override func keyDown(with event: NSEvent) {
     if event.keyCode == 53 {
-      onCancel?()
+      if onEscape?() != true { onCancel?() }
       return
     }
     // Keys that mean nothing here are dropped quietly; the default is the system beep.
@@ -47,6 +50,10 @@ final class PanelController {
 
   /// Called with the new state whenever the panel opens or closes.
   var onVisibilityChange: ((Bool) -> Void)?
+  var onEscape: (() -> Bool)? {
+    get { panel.onEscape }
+    set { panel.onEscape = newValue }
+  }
   var onKey: ((NSEvent) -> Bool)? {
     get { panel.onKey }
     set { panel.onKey = newValue }

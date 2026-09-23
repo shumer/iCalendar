@@ -15,12 +15,12 @@ final class SettingsWindowController: NSWindowController {
 
   init(
     preferences: Preferences, format: FormatEditorModel, hotkey: HotkeyRecorderModel,
-    loginItem: LoginItemModel, updater: Updater
+    loginItem: LoginItemModel, updater: Updater, vacations: VacationStore
   ) {
     tabs.tabStyle = .toolbar
     tabs.addTabViewItem(
       Self.tab(symbol: "gearshape", GeneralPane(preferences: preferences, format: format, hotkey: hotkey, loginItem: loginItem)))
-    tabs.addTabViewItem(Self.tab(symbol: "calendar", CalendarPane(preferences: preferences)))
+    tabs.addTabViewItem(Self.tab(symbol: "calendar", CalendarPane(preferences: preferences, vacations: vacations)))
     tabs.addTabViewItem(Self.tab(symbol: "paintbrush", AppearancePane(preferences: preferences)))
     tabs.addTabViewItem(Self.tab(symbol: "info.circle", AboutPane(updater: updater)))
 

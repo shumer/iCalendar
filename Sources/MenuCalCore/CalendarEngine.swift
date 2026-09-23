@@ -7,6 +7,7 @@ import Foundation
 public struct DayIndicator: Equatable, Sendable {
   public enum Kind: Equatable, Sendable {
     case publicHoliday
+    case vacation
   }
 
   public let kind: Kind
@@ -18,7 +19,15 @@ public struct DayIndicator: Equatable, Sendable {
   }
 }
 
-/// The extension point for whatever marks days: `HolidayCalendar` today, events some day.
+/// Where a day sits in a run of vacation days within its row, which decides the shape of the
+/// band behind it: a whole capsule, a left end, a middle piece or a right end. A run that
+/// continues on the next row ends at the row's edge and starts again on the next.
+public enum BandSegment: Equatable, Sendable {
+  case single, start, middle, end
+}
+
+/// The extension point for whatever marks days: `HolidayCalendar` and `VacationCalendar` today,
+/// events some day.
 public protocol IndicatorProvider {
   func indicators(for day: Date, calendar: Calendar) -> [DayIndicator]
 }
@@ -35,9 +44,19 @@ public struct DayCellModel: Identifiable, Equatable, Sendable {
   public let accessibilityLabel: String
   public let indicators: [DayIndicator]
 
+  /// Set by the engine once the row is known.
+  public internal(set) var vacationSegment: BandSegment?
+
   /// The name of the public holiday on this day, if it is one.
   public var holidayName: String? {
     indicators.first { $0.kind == .publicHoliday }?.title
+  }
+
+  public var isVacation: Bool { indicators.contains { $0.kind == .vacation } }
+
+  /// The vacation's name, which may be empty for a vacation without one.
+  public var vacationName: String? {
+    indicators.first { $0.kind == .vacation }?.title
   }
 }
 
@@ -157,9 +176,10 @@ public enum CalendarEngine {
       for column in 0..<daysPerWeek {
         let date = day(gridStart, offsetBy: row * daysPerWeek + column, calendar: calendar)
         let indicators = indicatorProvider?.indicators(for: date, calendar: calendar) ?? []
-        // VoiceOver hears the holiday with the date, since red text says nothing to it.
+        // VoiceOver hears the holiday with the date, since red text says nothing to it, and a
+        // vacation by its name or, without one, by a word the view supplies.
         let spoken = ([formatters.accessibility.string(from: date)] + indicators.map(\.title))
-          .joined(separator: ", ")
+          .filter { !$0.isEmpty }.joined(separator: ", ")
         days.append(
           DayCellModel(
             id: date,
@@ -170,6 +190,16 @@ public enum CalendarEngine {
             isWeekend: calendar.isDateInWeekend(date),
             accessibilityLabel: spoken,
             indicators: indicators))
+      }
+      for column in 0..<daysPerWeek where days[column].isVacation {
+        let before = column > 0 && days[column - 1].isVacation
+        let after = column < daysPerWeek - 1 && days[column + 1].isVacation
+        days[column].vacationSegment = switch (before, after) {
+        case (false, false): .single
+        case (false, true): .start
+        case (true, true): .middle
+        case (true, false): .end
+        }
       }
       let weekOfYear = calendar.component(.weekOfYear, from: days[0].date)
       weeks.append(

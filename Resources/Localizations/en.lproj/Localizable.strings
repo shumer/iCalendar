@@ -99,3 +99,14 @@
 "settings.holidays.country.system" = "System region (%@)";
 "settings.holidays.country.systemUnknown" = "System region (no holiday list)";
 "settings.holidays.note" = "Only official days off for the whole country. The list comes from date.nager.at about once a month; nothing but the country code is sent.";
+
+"vacation.title" = "Vacation";
+"vacation.mark" = "Mark as Vacation";
+"vacation.remove" = "Remove Vacation";
+"vacation.cancel" = "Cancel";
+"vacation.dayCount" = "%d days";
+"settings.vacation.toggle" = "Show vacations";
+"settings.vacation.empty" = "No vacations yet. In the calendar, click the first day, Shift-click the last and press Vacation, or right-click a day.";
+"settings.vacation.namePlaceholder" = "Name";
+"settings.vacation.delete" = "Delete vacation";
+"settings.vacation.note" = "Vacations are green in the calendar and stay on this Mac.";

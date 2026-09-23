@@ -3,6 +3,7 @@ import SwiftUI
 
 struct CalendarPane: View {
   let preferences: Preferences
+  let vacations: VacationStore
 
   var body: some View {
     @Bindable var preferences = preferences
@@ -36,6 +37,40 @@ struct CalendarPane: View {
           .frame(maxWidth: .infinity, alignment: .leading)
       }
       Section {
+        Toggle(L("settings.vacation.toggle"), isOn: $preferences.showsVacation)
+        if vacations.list.isEmpty {
+          Text(L("settings.vacation.empty"))
+            .font(.callout)
+            .foregroundStyle(.secondary)
+        }
+        ForEach(vacations.list.ranges) { range in
+          HStack(spacing: 8) {
+            Text(Self.rangeText(range))
+              .font(.body.monospacedDigit())
+              .frame(width: 150, alignment: .leading)
+            TextField(
+              L("settings.vacation.namePlaceholder"),
+              text: Binding(get: { range.name }, set: { vacations.rename(id: range.id, to: $0) }))
+            .textFieldStyle(.roundedBorder)
+            Button {
+              vacations.delete(id: range.id)
+            } label: {
+              Image(systemName: "minus.circle.fill")
+            }
+            .buttonStyle(.borderless)
+            .foregroundStyle(.secondary)
+            .accessibilityLabel(L("settings.vacation.delete"))
+            .help(L("settings.vacation.delete"))
+          }
+          .disabled(!preferences.showsVacation)
+        }
+      } footer: {
+        Text(L("settings.vacation.note"))
+          .font(.callout)
+          .foregroundStyle(.secondary)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
+      Section {
         Picker(L("settings.calendar.reopen"), selection: $preferences.reopenBehavior) {
           Text(L("settings.calendar.reopen.current")).tag(ReopenBehavior.currentMonth)
           Text(L("settings.calendar.reopen.last")).tag(ReopenBehavior.lastViewedMonth)
@@ -45,6 +80,19 @@ struct CalendarPane: View {
     .formStyle(.grouped)
     .frame(width: 520)
     .fixedSize(horizontal: false, vertical: true)
+  }
+
+  /// "23 Sep - 2 Oct 2026", in the user's calendar and language.
+  private static func rangeText(_ range: VacationRange) -> String {
+    let calendar = Calendar.autoupdatingCurrent
+    guard let start = VacationCalendar.date(for: range.startKey, calendar: calendar),
+      let end = VacationCalendar.date(for: range.endKey, calendar: calendar)
+    else { return "" }
+    let formatter = DateIntervalFormatter()
+    formatter.calendar = calendar
+    formatter.locale = .autoupdatingCurrent
+    formatter.dateTemplate = "dMMMy"
+    return formatter.string(from: start, to: end)
   }
 
   private var systemRegionTitle: String {

@@ -99,3 +99,14 @@
 "settings.holidays.country.system" = "Регион системы (%@)";
 "settings.holidays.country.systemUnknown" = "Регион системы (списка праздников нет)";
 "settings.holidays.note" = "Только официальные нерабочие дни для всей страны. Список загружается с date.nager.at примерно раз в месяц, передаётся только код страны.";
+
+"vacation.title" = "Отпуск";
+"vacation.mark" = "Отметить как отпуск";
+"vacation.remove" = "Убрать отпуск";
+"vacation.cancel" = "Отмена";
+"vacation.dayCount" = "дней: %d";
+"settings.vacation.toggle" = "Показывать отпуск";
+"settings.vacation.empty" = "Отпусков пока нет. В календаре кликните первый день, Shift-кликните последний и нажмите «Отпуск», либо кликните день правой кнопкой.";
+"settings.vacation.namePlaceholder" = "Название";
+"settings.vacation.delete" = "Удалить отпуск";
+"settings.vacation.note" = "Отпуск в календаре зелёный и хранится только на этом Mac.";

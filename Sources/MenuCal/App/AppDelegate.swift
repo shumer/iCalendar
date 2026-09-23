@@ -22,8 +22,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     NSApp.mainMenu = MainMenu.make(target: self)
     applyAppearance()
 
-    let model = CalendarViewModel(preferences: preferences, holidays: HolidayStore())
+    let vacations = VacationStore()
+    let model = CalendarViewModel(preferences: preferences, holidays: HolidayStore(), vacations: vacations)
     let panel = PanelController(content: CalendarPanelView(model: model))
+    panel.onEscape = {
+      // Esc first drops a range selection, and only then closes the panel.
+      guard model.state.hasRange else { return false }
+      model.clearRange()
+      return true
+    }
     let status = StatusItemController(preferences: preferences)
 
     panel.onVisibilityChange = { [weak status] isOpen in
@@ -139,7 +146,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     if settingsWindowController == nil {
       settingsWindowController = SettingsWindowController(
         preferences: preferences, format: formatEditor, hotkey: hotkeyRecorder, loginItem: loginItem,
-        updater: updater)
+        updater: updater, vacations: calendarModel?.vacations ?? VacationStore())
     }
     loginItem.refresh()
     if let pane { settingsWindowController?.select(pane) }

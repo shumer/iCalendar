@@ -16,8 +16,8 @@ this file; when the two disagree, this file wins and the code is the bug.
 | Toolchain | SwiftPM only, no Xcode project, see `docs/adr/0001-spm-only-toolchain.md` |
 
 Not part of v1, by design: the month and year quick picker (NAV-4 of the brief, concept A does
-not have one), events, reminders, time zones. Public holidays were added after 0.1 at the
-customer's request.
+not have one), reminders, time zones, accounts of the app's own. Public holidays were added
+after 0.1 and vacations after 0.3 at the customer's request; events follow (ADR 0005).
 
 ## 2. Container
 
@@ -94,6 +94,7 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | `text.secondary` | `secondaryLabelColor` |
 | `text.adjacentMonth`, `text.weekNumber` | `tertiaryLabelColor` |
 | `text.dayOff` (highlighted weekends, public holidays) | `systemRed` |
+| `band.vacation` | `systemGreen` at 13% (dark: 19%) fill, 1 pt line at 42% (dark: 52%) |
 | `accent` | `controlAccentColor` |
 | `text.onAccent` | `white` |
 | `fill.hover`, `fill.footer`, `fill.navCapsule` | `quaternarySystemFill` |
@@ -110,6 +111,9 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | Weekend | `text.dayOff` while "Highlight weekends in red" is on, primary text otherwise; decided by `Calendar.isDateInWeekend`. The weekday symbols of weekend columns follow. Changed on 2026-09-18: the first version dimmed weekends to secondary text, which the customer read as the setting doing nothing |
 | Adjacent month | tertiary text, clickable, a click also moves to that month |
 | Public holiday | `text.dayOff`, the same red as a highlighted weekend, because both mean a day off; at 45% opacity in an adjacent month, and so is a weekend there. The name is the cell's tooltip and part of its VoiceOver label |
+| Vacation | a `band.vacation` capsule behind the day, the height of the day circle, joined across the column spacing to the next vacation day in the row; a single day is a full capsule. The number keeps its colour. 45% opacity in an adjacent month. The name (or "Vacation") is the tooltip, part of the VoiceOver label and in the footer |
+| Today in a vacation | the today circle inset 2 pt, so the band shows as a green rim around it |
+| Range selection | every day from the anchor to the selection gets the selected ring |
 | Hover | `fill.hover` circle |
 | Pressed | `fill.pressed` circle, scale 0.94 on the circle only, the hit area does not move |
 | Selected | 1.5 pt accent ring inside the circle, semibold |
@@ -175,7 +179,7 @@ The status item's width is never animated.
 - Header chevrons change the displayed month and keep the selection. "Today" is disabled only
   while the current month is displayed. `T` and `Cmd+T` always select today.
 - Keyboard: arrows move the focus by 1 or 7 days and carry the displayed month across its edge;
-  `Space` and `Return` select; `Option+arrows` change the month; `Shift+Cmd+arrows` change the
+  `Shift+arrows` extend a range; `Space` and `Return` select; `Option+arrows` change the month; `Shift+Cmd+arrows` change the
   year, clamped by `Calendar`; `Esc` closes.
 - Scroll: accumulate the precise delta to a 40 pt threshold, at most one month per gesture, a new
   gesture starts after the previous one ended, momentum is ignored. A wheel without phases gets a
@@ -184,6 +188,9 @@ The status item's width is never animated.
 - The footer shows the full date. When the selected day is a public holiday it shows a short
   date, a middle dot and the holiday's name in `text.dayOff`; the date comes first so that a
   long name is what gets truncated.
+- While a range is selected, or the selected day is a vacation, the footer is an action bar: the
+  range ("23 Sep - 2 Oct  ·  10 days") on the left, Cancel and Vacation or Remove on the right.
+  Esc drops the range before it closes the panel. ADR 0005 has the interaction.
 - Public holidays are official days off for the whole country of the system region, or of the
   country picked in settings. See `docs/adr/0004-public-holidays.md`.
 - Midnight, a time zone change and waking from sleep recompute today. A date the user picked stays
