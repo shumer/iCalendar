@@ -157,6 +157,8 @@ struct EventsPane: View {
         }
         .toggleStyle(.checkbox)
         .padding(.leading, 26)
+        // A form centres a lone control in its row; these are a list and read from the left.
+        .frame(maxWidth: .infinity, alignment: .leading)
       }
       if members.isEmpty {
         Text(L("settings.events.noCalendars"))
