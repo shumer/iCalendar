@@ -64,7 +64,7 @@ func eventsTests(_ run: TestRun) {
     t.expectEqual(settings.gridSlot(of: settings.groups[0].id), 0)
     t.expectEqual(settings.gridSlot(of: third.id), 2)
     t.expectEqual(settings.gridSlot(of: fourth.id), nil, "the fourth lives in the list only")
-    settings.update(id: settings.groups[0].id) { $0.showsInGrid = false }
+    settings.update(id: settings.groups[0].id) { $0.visibility = .listOnly }
     t.expectEqual(settings.gridSlot(of: settings.groups[0].id), nil)
     t.expectEqual(settings.gridSlot(of: third.id), 1, "the slots close up")
     t.expectEqual(settings.gridSlot(of: fourth.id), 2)
@@ -133,15 +133,61 @@ func eventsTests(_ run: TestRun) {
 
   run.test("a group hidden from the grid gives no dot, and disabled events give none at all") { t in
     var settings = adopted()
-    settings.update(id: settings.groups[0].id) { $0.showsInGrid = false }
+    settings.update(id: settings.groups[0].id) { $0.visibility = .listOnly }
     let day = at(2026, 9, 24)
     let events = [EventItem(id: "1", calendarID: school.id, title: "Урок", start: day, end: day.addingTimeInterval(3600), isAllDay: false)]
     let index = EventIndex(events: events, calendar: calendar)
     t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 0)
-    settings.update(id: settings.groups[0].id) { $0.showsInGrid = true }
+    settings.update(id: settings.groups[0].id) { $0.visibility = .gridAndList }
     t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 1)
     settings.isEnabled = false
     t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 0)
+  }
+
+  run.test("a hidden group is in neither the grid nor the list, and a 0.5 file still reads") { t in
+    var settings = adopted()
+    settings.update(id: settings.groups[0].id) { $0.visibility = .hidden }
+    let day = at(2026, 9, 24)
+    let events = [EventItem(id: "1", calendarID: school.id, title: "Урок", start: day, end: day.addingTimeInterval(3600), isAllDay: false)]
+    let index = EventIndex(events: events, calendar: calendar)
+    let formatter = DateFormatter()
+    formatter.calendar = calendar
+    formatter.timeZone = calendar.timeZone
+    formatter.dateFormat = "HH:mm"
+    t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 0)
+    t.expectEqual(EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, allDayText: "").count, 0)
+    t.expect(settings.isShown(school.id), "the calendar still belongs to the group")
+
+    let oldJSON = "{\"isEnabled\":true,\"groups\":[{\"id\":\"6B3B9F2E-1D1E-4E1D-9A1B-2C3D4E5F6A7B\",\"name\":\"Old\",\"paletteIndex\":1,\"showsInGrid\":false,\"calendarIDs\":[\"x\"]}]}"
+    let decoded = try JSONDecoder().decode(EventSettings.self, from: Data(oldJSON.utf8))
+    t.expectEqual(decoded.groups[0].visibility, .listOnly)
+    let roundTrip = try JSONDecoder().decode(EventSettings.self, from: JSONEncoder().encode(decoded))
+    t.expectEqual(roundTrip, decoded)
+  }
+
+  run.test("an unticked calendar is neither in the grid nor the list, and stays in its group") { t in
+    var settings = adopted()
+    settings.setVisible(personal.id, false)
+    let day = at(2026, 9, 24)
+    let events = [
+      EventItem(id: "p", calendarID: personal.id, title: "Личное", start: day, end: day.addingTimeInterval(3600), isAllDay: false),
+      EventItem(id: "s", calendarID: school.id, title: "Урок", start: day.addingTimeInterval(7200), end: day.addingTimeInterval(9000), isAllDay: false),
+    ]
+    let index = EventIndex(events: events, calendar: calendar)
+    let formatter = DateFormatter()
+    formatter.calendar = calendar
+    formatter.timeZone = calendar.timeZone
+    formatter.dateFormat = "HH:mm"
+    let rows = EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, allDayText: "")
+    t.expectEqual(rows.map(\.id), ["s"], "only the timetable is left")
+    t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 1, "the group still has a dot from the timetable")
+    t.expect(settings.isShown(personal.id) && !settings.isVisible(personal.id))
+    settings.setVisible(school.id, false)
+    t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 0)
+    settings.setVisible(personal.id, true)
+    t.expect(settings.isVisible(personal.id))
+    let decoded = try JSONDecoder().decode(EventSettings.self, from: JSONEncoder().encode(settings))
+    t.expectEqual(decoded.hiddenCalendarIDs, [school.id])
   }
 
   run.test("the day's list has all-day rows first, then by time, and skips hidden calendars") { t in

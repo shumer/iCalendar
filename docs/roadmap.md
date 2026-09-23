@@ -53,6 +53,10 @@
   colour and a slot, up to three dots per day, the day's list inside the panel, the Events pane
   with an Edit sheet per group and the vacations table. ADR 0005, amended.
 
+- **Group and calendar visibility.** "Grid and list", "List only" or "Hidden" per group, in
+  place of the "in grid" checkbox that read as "show"; and a tick per calendar under its group,
+  so one calendar of an account can be kept and the rest hidden.
+
 ## Next
 
 - **Week view** in the day's list ("Week" in its header, the week number column opening it) and

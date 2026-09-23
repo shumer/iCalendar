@@ -122,7 +122,6 @@
 "settings.events.addGroup" = "Add Group";
 "settings.events.newGroup" = "New group";
 "settings.events.groupName" = "Name";
-"settings.events.inGrid" = "In grid";
 "settings.events.removeGroup" = "Remove group";
 "settings.events.color.indigo" = "Indigo";
 "settings.events.color.orange" = "Orange";
@@ -137,10 +136,8 @@
 "events.openInCalendar" = "Open in Calendar";
 "events.listLabel" = "Events on %@";
 "settings.events.access.granted.sub" = "Allowed. MenuCal only reads and never writes.";
-"settings.events.groups.note" = "A group, not a calendar: the colour and the dot belong to the group, and any number of calendars go inside. At most three groups get a dot in the grid. Unticking 'in grid' hides nothing: the events stay in the day's list.";
 "settings.events.edit" = "Edit…";
 "settings.events.editGroup" = "Group";
-"settings.events.inGrid.long" = "Show a dot in the month grid";
 "settings.events.calendarsInGroup" = "Calendars in this group";
 "settings.events.inOtherGroup" = "in %@";
 "settings.events.done" = "Done";
@@ -157,3 +154,10 @@
 "settings.vacation.unnamed" = "Untitled";
 "settings.vacation.add" = "Add vacation";
 "settings.vacation.addConfirm" = "Add";
+"settings.events.groups.note" = "A group, not a calendar: the colour and the dot belong to the group, and any number of calendars go inside. At most three groups get a dot in the grid. 'List only' keeps a group out of the grid but in the day's list; 'Hidden' takes it out of both and keeps its calendars.";
+"settings.events.visibility" = "Show";
+"settings.events.visibility.gridAndList" = "Grid and list";
+"settings.events.visibility.listOnly" = "List only";
+"settings.events.visibility.hidden" = "Hidden";
+"settings.events.calendarCountShown" = "%d of %d calendars";
+"settings.events.calendarsInGroup.sub" = "Ticking a calendar here moves it into this group. Whether it shows is the tick under the group in the list.";

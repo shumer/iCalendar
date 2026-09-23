@@ -120,8 +120,9 @@ is minutes. If a pattern is invalid, MenuCal keeps the last working format.
 MenuCal never asks for a password or a token: it reads the calendars macOS already has. Allow
 access once in **Settings > Events**; a work account appears only if it has been added to macOS
 in Internet Accounts. Each account becomes a group with a colour; **Edit…** on a group changes
-its name and colour and picks its calendars, and **in grid** decides whether the group gets a
-dot under the days. A day with events opens its list when clicked; a double click on an event
+its name and colour and picks its calendars, and its **Show** menu decides whether the group
+gets a dot under the days and a place in the day's list, the list only, or neither for now.
+The calendars of a group are listed under it: untick the ones you do not want to see. A day with events opens its list when clicked; a double click on an event
 opens it in Calendar.
 
 ### Vacation
