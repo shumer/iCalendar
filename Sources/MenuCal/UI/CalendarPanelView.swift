@@ -12,7 +12,11 @@ struct CalendarPanelView: View {
     VStack(spacing: metrics.sectionSpacing) {
       PopoverHeader(model: model)
       MonthGridView(model: model)
-      if model.preferences.showsFullDate {
+      if model.isDayListOpen {
+        DayListView(model: model)
+          .frame(height: metrics.dayListHeight)
+          .transition(.opacity)
+      } else if model.preferences.showsFullDate {
         footer
       }
     }

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- The hardened runtime shows no calendar permission dialog without this. It is a
+       resource access entitlement, allowed with a Developer ID and without a sandbox. -->
+  <key>com.apple.security.personal-information.calendars</key>
+  <true/>
+</dict>
+</plist>

@@ -21,8 +21,8 @@ final class VacationStore {
     }
   }
 
-  func add(from start: Date, to end: Date, calendar: Calendar) {
-    update { $0.add(VacationRange(startKey: key(start, calendar), endKey: key(end, calendar)), calendar: calendar) }
+  func add(from start: Date, to end: Date, name: String = "", calendar: Calendar) {
+    update { $0.add(VacationRange(startKey: key(start, calendar), endKey: key(end, calendar), name: name), calendar: calendar) }
   }
 
   func remove(from start: Date, to end: Date, calendar: Calendar) {

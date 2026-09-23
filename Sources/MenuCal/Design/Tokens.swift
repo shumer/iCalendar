@@ -19,6 +19,14 @@ struct Metrics: Equatable, Sendable {
   let gridRowSpacing: CGFloat
   let weekNumberColumnWidth: CGFloat
   let footerHeight: CGFloat
+  /// The day circle when a row of dots sits under it. The cell keeps its size.
+  let dayCircleWithDots: CGFloat
+  let eventDotSize: CGFloat
+  let eventDotSpacing: CGFloat
+  /// What the panel grows by when the day's list opens; the list scrolls beyond that.
+  let dayListHeight: CGFloat
+  let eventRowHeight: CGFloat
+  let eventTimeWidth: CGFloat
 
   /// Concentric: the radius of a surface nested in the panel is the panel's minus the padding.
   var innerCornerRadius: CGFloat { panelCornerRadius - panelPadding }
@@ -26,12 +34,17 @@ struct Metrics: Equatable, Sendable {
   var gridWidth: CGFloat { dayCellSize * 7 + gridColumnSpacing * 6 }
   var gridHeight: CGFloat { dayCellSize * 6 + gridRowSpacing * 5 }
 
-  func panelSize(showsWeekNumbers: Bool, showsFooter: Bool) -> CGSize {
+  func panelSize(showsWeekNumbers: Bool, showsFooter: Bool, showsDayList: Bool = false) -> CGSize {
     var width = panelPadding * 2 + gridWidth
     if showsWeekNumbers { width += weekNumberColumnWidth + gridColumnSpacing }
     var height = panelPadding * 2 + headerHeight + sectionSpacing + weekdayRowHeight
       + sectionSpacing + gridHeight
-    if showsFooter { height += sectionSpacing + footerHeight }
+    // The day's list takes the footer's place, and grows the panel by its own height.
+    if showsDayList {
+      height += sectionSpacing + dayListHeight
+    } else if showsFooter {
+      height += sectionSpacing + footerHeight
+    }
     return CGSize(width: width, height: height)
   }
 
@@ -47,14 +60,16 @@ struct Metrics: Equatable, Sendable {
     headerLeadingInset: 6, navCapsuleHeight: 28, navCapsulePadding: 2,
     navButtonSize: CGSize(width: 28, height: 24), todayButtonHorizontalPadding: 8,
     weekdayRowHeight: 20, dayCellSize: 36, gridColumnSpacing: 4, gridRowSpacing: 2,
-    weekNumberColumnWidth: 28, footerHeight: 36)
+    weekNumberColumnWidth: 28, footerHeight: 36, dayCircleWithDots: 30, eventDotSize: 4,
+    eventDotSpacing: 3, dayListHeight: 146, eventRowHeight: 28, eventTimeWidth: 52)
 
   static let compact = Metrics(
     panelCornerRadius: 20, panelPadding: 10, sectionSpacing: 6, headerHeight: 28,
     headerLeadingInset: 4, navCapsuleHeight: 24, navCapsulePadding: 2,
     navButtonSize: CGSize(width: 24, height: 20), todayButtonHorizontalPadding: 6,
     weekdayRowHeight: 16, dayCellSize: 30, gridColumnSpacing: 2, gridRowSpacing: 2,
-    weekNumberColumnWidth: 24, footerHeight: 30)
+    weekNumberColumnWidth: 24, footerHeight: 30, dayCircleWithDots: 26, eventDotSize: 4,
+    eventDotSpacing: 2, dayListHeight: 120, eventRowHeight: 24, eventTimeWidth: 46)
 }
 
 enum Tokens {
@@ -115,6 +130,10 @@ struct Typography: Equatable, Sendable {
   var weekNumber: Font { .system(size: weekNumberSize, weight: .medium).monospacedDigit() }
   var footer: Font { .system(size: footerSize, weight: .medium) }
   var chevron: Font { .system(size: chevronSize, weight: .semibold) }
+  var eventTime: Font { .system(size: footerSize - 1, weight: .regular).monospacedDigit() }
+  var eventTitle: Font { .system(size: footerSize, weight: .regular) }
+  var eventAllDay: Font { .system(size: footerSize - 2, weight: .medium) }
+  var listHeader: Font { .system(size: footerSize, weight: .semibold) }
 
   func day(isToday: Bool, isSelected: Bool) -> Font {
     let weight: Font.Weight = isToday ? .bold : (isSelected ? .semibold : .regular)
@@ -144,6 +163,17 @@ enum Palette {
   /// A day nobody works: a highlighted weekend day or a public holiday.
   static let dayOff = Color(nsColor: .systemRed)
   static let vacation = Color(nsColor: .systemGreen)
+
+  /// The group palette of ADR 0005: six colours in a fixed order, none of them the red of a day
+  /// off, the accent of today or the green of a vacation.
+  static let groupPalette: [Color] = [
+    Color(nsColor: .systemIndigo), Color(nsColor: .systemOrange), Color(nsColor: .systemTeal),
+    Color(nsColor: .systemPurple), Color(nsColor: .systemBrown), Color(nsColor: .systemYellow),
+  ]
+
+  static func group(_ paletteIndex: Int) -> Color {
+    groupPalette[((paletteIndex % groupPalette.count) + groupPalette.count) % groupPalette.count]
+  }
   static let hoverFill = Color(nsColor: .quaternarySystemFill)
   static let pressedFill = Color(nsColor: .tertiarySystemFill)
   static let separator = Color(nsColor: .separatorColor)

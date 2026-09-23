@@ -31,13 +31,34 @@ How it looks and behaves follows the designer's section A:
 - The list of vacations, with optional names, is in Calendar settings, with a switch to hide
   them all.
 
-**Events come next, read only, through EventKit.** The customer's work Exchange account accepted
+**Events are read from the system's calendars, through EventKit, read only.** Amended
+2026-09-23, when they shipped. The customer's work Exchange account accepted
 a native connection with calendars in System Settings, which was the risk. EventKit gives the
 colours the user already chose, the recurrence expansion a school timetable needs, and the sync
 the system already does, with no OAuth, no tokens and no third party code (ADR 0002). The grid
-will show at most three dots per day, one per group of calendars, and a click will open the
-day's list inside the panel. This ADR only records the direction; the details land with their
-own pull request and an amendment here.
+shows at most three dots per day, one per group of calendars, and a click opens the day's list
+inside the panel. What shipped, after the designer's sections B to E:
+
+- **Groups, not calendars.** A calendar belongs to one group; the group has the colour, from a
+  fixed palette of six with no red, green or pink, and the slot of its dot. The first time an
+  account appears it becomes a group of its own, so the accounts are told apart before anybody
+  touches a setting. At most four groups; the first three that show in the grid get a slot.
+- **Dots.** One per group with events that day, 4 pt in a strip under the day; the circle
+  shrinks from 36 to 30 pt inside the same cell, so nothing moves. A group can be kept out of
+  the grid without leaving the list: a school timetable every weekday is a dot that says
+  nothing.
+- **The day's list** opens inside the panel in place of the footer, which grows by 146 pt and
+  then scrolls: a second window would close a transient panel the moment it took the focus.
+  All-day events first, a time column, a mark in the group's colour (a three letter tag under
+  Differentiate Without Colour), the title; a double click hands the event to Calendar. Esc
+  closes the list before the panel.
+- **The Events pane** is the fifth tab: access, the groups as name and sources with an Edit
+  sheet, the marks, and the vacations table, which moved here from Calendar.
+- **The permission.** The hardened runtime shows no calendar dialog without the entitlement
+  `com.apple.security.personal-information.calendars`; ADR 0003 is amended.
+
+Not done, and on the roadmap: the week view, the pin that keeps the panel open, a colour for
+vacations other than green.
 
 ## Alternatives rejected
 

@@ -24,6 +24,9 @@ and Compact sizes. The translucent background picks up what is behind the calend
   highlight weekends, and see the full selected date below the grid.
 - **Public holidays.** Mark nationwide public holidays in red, using your system region or a
   country you choose. Hover over a holiday or select it to see its name.
+- **Events.** The events of the calendars in System Settings > Internet Accounts, read only:
+  a dot per group of calendars under the day, and a click opens the day's list. Groups, their
+  colours and which calendars go where are in **Settings > Events**.
 - **Vacation.** Mark your own days off: click the first day, Shift-click the last and press
   **Vacation**, or right-click a day. They show as a green band and stay on your Mac.
 - **A native macOS look.** Light, Dark or System appearance, your system accent or a custom
@@ -89,7 +92,8 @@ make them.
 | Pane | What you can change |
 | --- | --- |
 | **General** | Date format, menu bar icon, launch at login, global shortcut and automatic update checks |
-| **Calendar** | First day of the week, week numbers, full date line, weekend highlighting, public holidays and country, your vacations with names, current or last viewed month on opening |
+| **Calendar** | First day of the week, week numbers, full date line, weekend highlighting, public holidays and country, current or last viewed month on opening |
+| **Events** | Calendar access, groups of calendars with colours and dots, marks in the grid, your vacations with names |
 | **Appearance** | System / Light / Dark theme, system or custom accent colour, Regular / Compact size |
 | **About** | Version and update status |
 
@@ -111,12 +115,21 @@ For example, with an English locale on September 18, 2026 at 14:30:
 Patterns use Unicode date format symbols. Letter case matters: `MM` is the month and `mm`
 is minutes. If a pattern is invalid, MenuCal keeps the last working format.
 
+### Events
+
+MenuCal never asks for a password or a token: it reads the calendars macOS already has. Allow
+access once in **Settings > Events**; a work account appears only if it has been added to macOS
+in Internet Accounts. Each account becomes a group with a colour; **Edit…** on a group changes
+its name and colour and picks its calendars, and **in grid** decides whether the group gets a
+dot under the days. A day with events opens its list when clicked; a double click on an event
+opens it in Calendar.
+
 ### Vacation
 
 Click the first day of your vacation, Shift-click the last one and press **Vacation** in the
 footer. Shift and the arrow keys do the same from the keyboard, and a right-click on any day
 marks or unmarks that day alone. Vacations are a green band behind the days; a public holiday
-inside one stays red. **Settings > Calendar** lists them, lets you name or delete them, and can
+inside one stays red. **Settings > Events** lists them, lets you name, add or delete them, and can
 hide them all. Nothing about them leaves your Mac.
 
 ### Public holidays

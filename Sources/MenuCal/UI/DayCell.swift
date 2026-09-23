@@ -36,6 +36,8 @@ struct DayCell: View {
         pulse: day.isToday ? model.state.todayPulseCount : 0,
         accent: model.accent,
         isDark: colorScheme == .dark,
+        showsDots: model.showsEventDots,
+        showsAdjacentDots: model.eventSettings.settings.showsDotsInAdjacentMonths,
         metrics: model.metrics,
         typography: model.typography))
     .focusable(false)
@@ -83,17 +85,38 @@ private struct DayCellStyle: ButtonStyle {
   let pulse: Int
   let accent: Color
   let isDark: Bool
+  let showsDots: Bool
+  let showsAdjacentDots: Bool
   let metrics: Metrics
   let typography: Typography
 
   func makeBody(configuration: Configuration) -> some View {
     let size = metrics.dayCellSize
+    // With dots on, the circle shrinks inside the same cell and the dots take the strip below;
+    // the hit area and the rhythm of the grid do not move.
+    let circle = showsDots ? metrics.dayCircleWithDots : size
     configuration.label
       .font(typography.day(isToday: day.isToday, isSelected: isSelected))
       .foregroundStyle(textColor)
-      .frame(width: size, height: size)
+      .frame(width: circle, height: circle)
       .background {
         background(isPressed: configuration.isPressed)
+      }
+      .frame(width: size, height: size, alignment: showsDots ? .top : .center)
+      .overlay(alignment: .bottom) {
+        if showsDots, day.isInCurrentMonth || showsAdjacentDots {
+          HStack(spacing: metrics.eventDotSpacing) {
+            ForEach(day.eventDots, id: \.slot) { dot in
+              Circle()
+                .fill(Palette.group(dot.paletteIndex))
+                .frame(width: metrics.eventDotSize, height: metrics.eventDotSize)
+            }
+          }
+          .frame(height: metrics.eventDotSize)
+          .opacity(day.isInCurrentMonth ? 1 : Tokens.Opacity.dayOffInAdjacentMonth)
+          .padding(.bottom, (size - circle - metrics.eventDotSize) / 2)
+          .accessibilityHidden(true)
+        }
       }
       .overlay {
         if isFocused {

@@ -23,13 +23,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     applyAppearance()
 
     let vacations = VacationStore()
-    let model = CalendarViewModel(preferences: preferences, holidays: HolidayStore(), vacations: vacations)
+    let events = EventStore()
+    let eventSettings = EventSettingsStore()
+    let model = CalendarViewModel(
+      preferences: preferences, holidays: HolidayStore(), vacations: vacations,
+      events: events, eventSettings: eventSettings)
     let panel = PanelController(content: CalendarPanelView(model: model))
     panel.onEscape = {
-      // Esc first drops a range selection, and only then closes the panel.
-      guard model.state.hasRange else { return false }
-      model.clearRange()
-      return true
+      // Esc first drops a range selection, then closes the day's list, and only then the panel.
+      if model.state.hasRange {
+        model.clearRange()
+        return true
+      }
+      if model.isDayListOpen {
+        model.setDayList(open: false)
+        return true
+      }
+      return false
     }
     let status = StatusItemController(preferences: preferences)
 
@@ -61,6 +71,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     calendarModel = model
     trackLayout()
     trackAppearance()
+    trackAccounts()
     updater.start()
     Log.app.info("MenuCal launched")
   }
@@ -95,6 +106,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         self.trackLayout()
       }
     }
+  }
+
+  /// Every account the system shows gets a group once; see EventSettings.adopt.
+  private func trackAccounts() {
+    guard let model = calendarModel else { return }
+    withObservationTracking {
+      _ = model.events.calendars
+    } onChange: { [weak self] in
+      Task { @MainActor in
+        guard let self, let model = self.calendarModel else { return }
+        model.eventSettings.adopt(accounts: model.events.accounts, calendars: model.events.calendars)
+        self.trackAccounts()
+      }
+    }
+    model.eventSettings.adopt(accounts: model.events.accounts, calendars: model.events.calendars)
   }
 
   // MARK: Appearance
@@ -146,7 +172,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     if settingsWindowController == nil {
       settingsWindowController = SettingsWindowController(
         preferences: preferences, format: formatEditor, hotkey: hotkeyRecorder, loginItem: loginItem,
-        updater: updater, vacations: calendarModel?.vacations ?? VacationStore())
+        updater: updater, vacations: calendarModel?.vacations ?? VacationStore(),
+        events: calendarModel?.events ?? EventStore(), eventSettings: calendarModel?.eventSettings ?? EventSettingsStore())
     }
     loginItem.refresh()
     if let pane { settingsWindowController?.select(pane) }

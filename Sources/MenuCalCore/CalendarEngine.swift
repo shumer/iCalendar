@@ -8,6 +8,13 @@ public struct DayIndicator: Equatable, Sendable {
   public enum Kind: Equatable, Sendable {
     case publicHoliday
     case vacation
+    /// A group of calendars with events on the day: `slot` is its dot's position, 0 to 2.
+    case events(slot: Int, paletteIndex: Int)
+
+    public var slot: Int? {
+      if case .events(let slot, _) = self { return slot }
+      return nil
+    }
   }
 
   public let kind: Kind
@@ -53,6 +60,16 @@ public struct DayCellModel: Identifiable, Equatable, Sendable {
   }
 
   public var isVacation: Bool { indicators.contains { $0.kind == .vacation } }
+
+  /// The dots under the day, sorted by slot.
+  public var eventDots: [(slot: Int, paletteIndex: Int, groupName: String)] {
+    indicators.compactMap { indicator in
+      if case .events(let slot, let palette) = indicator.kind { return (slot, palette, indicator.title) }
+      return nil
+    }
+  }
+
+  public var hasEvents: Bool { !eventDots.isEmpty }
 
   /// The vacation's name, which may be empty for a vacation without one.
   public var vacationName: String? {

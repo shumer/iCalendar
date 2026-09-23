@@ -73,6 +73,16 @@ macOS 14, 15 and 27 were not available and count as unchecked.
 - A click on a vacation day shows its date and "Vacation" with a Remove button.
 - Calendar settings list the range with a name field and a delete button.
 
+## Events, watched on 2026-09-23
+
+- The permission dialog appeared only after the calendar entitlement was added to the
+  signature; before it, TCC refused the prompt in silence.
+- After access: four accounts and their calendars in the Events pane, one group per account
+  with its own colour, in the designer's layout.
+- The grid shows dots under the days, up to three, in the group colours.
+- A click on a day opens its list in place of the footer: all-day rows first, times, marks,
+  titles; the panel grows from 362 to 472.
+
 ## Never watched
 
 - Keyboard navigation and scrolling in the panel, end to end.
@@ -81,6 +91,9 @@ macOS 14, 15 and 27 were not available and count as unchecked.
 - Launch at login after a reboot.
 - An update the signature check has to refuse: a download signed by another team, or an older
   version. The refusal has unit tests for the feed and none for the signature.
+- The Edit sheet of a group, moving a calendar between groups, "in grid" off, marks off,
+  adding a vacation from the settings table, a double click opening Calendar, the tag mode
+  under Differentiate Without Colour, a system calendar change while the panel is open.
 - Vacation from the keyboard (Shift-arrows) and from the right-click menu; renaming and
   deleting a vacation in settings; a range across the month's edge.
 - Holidays with the network off, with another country picked, and turned off in settings.
