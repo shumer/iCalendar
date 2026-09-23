@@ -159,3 +159,5 @@
 "settings.events.visibility.gridAndList" = "Siatka i lista";
 "settings.events.visibility.listOnly" = "Tylko lista";
 "settings.events.visibility.hidden" = "Ukryte";
+"settings.events.calendarCountShown" = "kalendarze: %d z %d";
+"settings.events.calendarsInGroup.sub" = "Zaznaczenie tutaj przenosi kalendarz do tej grupy. O tym, czy jest pokazywany, decyduje zaznaczenie pod grupą na liście.";

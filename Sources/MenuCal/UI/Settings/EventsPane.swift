@@ -131,39 +131,71 @@ struct EventsPane: View {
     }
   }
 
-  /// A colour well, the name over its sources, the grid checkbox and Edit.
+  /// A colour well, the name over its sources, where it shows, Edit; and under it the group's
+  /// calendars with a tick each, so that keeping one calendar out of an account is one click and
+  /// not a trip into the sheet.
   private func groupRow(_ group: EventGroup) -> some View {
-    HStack(spacing: 10) {
-      RoundedRectangle(cornerRadius: 4, style: .continuous)
-        .fill(Palette.group(group.paletteIndex))
-        .frame(width: 16, height: 16)
-        .accessibilityHidden(true)
-      VStack(alignment: .leading, spacing: 1) {
-        Text(group.name.isEmpty ? L("settings.events.newGroup") : group.name)
-        Text(sourcesLine(group))
+    let settings = store.settings
+    let members = group.calendarIDs.compactMap { events.calendarsByID[$0] }
+    return DisclosureGroup(
+      isExpanded: Binding(get: { !sheets.collapsedGroupIDs.contains(group.id) }, set: { expanded in
+        if expanded { sheets.collapsedGroupIDs.remove(group.id) } else { sheets.collapsedGroupIDs.insert(group.id) }
+      })
+    ) {
+      ForEach(members) { calendar in
+        Toggle(isOn: Binding(get: { !settings.hiddenCalendarIDs.contains(calendar.id) }, set: { on in
+          store.update { $0.setVisible(calendar.id, on) }
+        })) {
+          HStack(spacing: 6) {
+            Circle()
+              .fill(Color(.sRGB, red: calendar.color.red, green: calendar.color.green, blue: calendar.color.blue))
+              .frame(width: 8, height: 8)
+            Text(calendar.title)
+              .lineLimit(1)
+              .truncationMode(.tail)
+          }
+        }
+        .toggleStyle(.checkbox)
+        .padding(.leading, 26)
+      }
+      if members.isEmpty {
+        Text(L("settings.events.noCalendars"))
           .font(.callout)
           .foregroundStyle(.secondary)
-          .lineLimit(1)
-          .truncationMode(.middle)
+          .padding(.leading, 26)
       }
-      Spacer(minLength: 12)
-      VisibilityPicker(group: group, store: store)
-        .fixedSize()
-      Button(L("settings.events.edit")) { sheets.editingGroupID = group.id }
-        .controlSize(.small)
+    } label: {
+      HStack(spacing: 10) {
+        RoundedRectangle(cornerRadius: 4, style: .continuous)
+          .fill(Palette.group(group.paletteIndex))
+          .frame(width: 16, height: 16)
+          .accessibilityHidden(true)
+        VStack(alignment: .leading, spacing: 1) {
+          Text(group.name.isEmpty ? L("settings.events.newGroup") : group.name)
+          Text(sourcesLine(group, members: members, settings: settings))
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .truncationMode(.middle)
+        }
+        Spacer(minLength: 12)
+        VisibilityPicker(group: group, store: store)
+          .fixedSize()
+        Button(L("settings.events.edit")) { sheets.editingGroupID = group.id }
+          .controlSize(.small)
+      }
     }
-    .accessibilityElement(children: .combine)
   }
 
-  /// "Google · 2 calendars", or the one calendar's name, or the accounts when there are several.
-  private func sourcesLine(_ group: EventGroup) -> String {
-    let byID = events.calendarsByID
-    let members = group.calendarIDs.compactMap { byID[$0] }
+  /// "Google · 2 of 5 calendars", or the one calendar's name.
+  private func sourcesLine(_ group: EventGroup, members: [CalendarInfo], settings: EventSettings) -> String {
     guard !members.isEmpty else { return L("settings.events.noCalendars") }
     let accountTitles = Set(members.map(\.accountID)).compactMap { id in events.accounts.first { $0.id == id }?.title }.sorted()
     let account = accountTitles.count == 1 ? accountTitles[0] : accountTitles.joined(separator: ", ")
     if members.count == 1 { return account + "  ·  " + members[0].title }
-    return account + "  ·  " + L("settings.events.calendarCount", members.count)
+    let shown = members.filter { !settings.hiddenCalendarIDs.contains($0.id) }.count
+    if shown == members.count { return account + "  ·  " + L("settings.events.calendarCount", members.count) }
+    return account + "  ·  " + L("settings.events.calendarCountShown", shown, members.count)
   }
 }
 
@@ -188,6 +220,7 @@ private struct VisibilityPicker: View {
 @Observable
 final class EventsPaneModel {
   var editingGroupID: UUID?
+  var collapsedGroupIDs: Set<UUID> = []
   var isAddingVacation = false
   var selectedVacationID: UUID?
   var newVacationStart = Date()
@@ -246,6 +279,9 @@ private struct GroupEditorSheet: View {
         Text(L("settings.events.calendarsInGroup"))
           .font(.callout)
           .foregroundStyle(.secondary)
+        Text(L("settings.events.calendarsInGroup.sub"))
+          .font(.callout)
+          .foregroundStyle(.tertiary)
         ScrollView {
           VStack(alignment: .leading, spacing: 6) {
             ForEach(events.accounts) { account in

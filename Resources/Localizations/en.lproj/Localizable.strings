@@ -159,3 +159,5 @@
 "settings.events.visibility.gridAndList" = "Grid and list";
 "settings.events.visibility.listOnly" = "List only";
 "settings.events.visibility.hidden" = "Hidden";
+"settings.events.calendarCountShown" = "%d of %d calendars";
+"settings.events.calendarsInGroup.sub" = "Ticking a calendar here moves it into this group. Whether it shows is the tick under the group in the list.";

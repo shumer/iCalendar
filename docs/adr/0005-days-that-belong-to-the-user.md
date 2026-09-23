@@ -48,7 +48,10 @@ inside the panel. What shipped, after the designer's sections B to E:
   the grid without leaving the list: a school timetable every weekday is a dot that says
   nothing. Amended the same day: the customer read the "in grid" checkbox as "show" and took
   the list for a bug, so a group now has three states, "Grid and list", "List only" and
-  "Hidden"; the last takes it out of both and keeps its calendars.
+  "Hidden"; the last takes it out of both and keeps its calendars. And the calendars of a
+  group are listed under it with a tick each, because the customer wanted to keep only his
+  child's timetable out of a whole account and could not find how: an unticked calendar stays
+  in its group and shows nowhere, and the sheet is only for moving calendars between groups.
 - **The day's list** opens inside the panel in place of the footer, which grows by 146 pt and
   then scrolls: a second window would close a transient panel the moment it took the focus.
   All-day events first, a time column, a mark in the group's colour (a three letter tag under

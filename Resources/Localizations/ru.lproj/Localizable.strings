@@ -159,3 +159,5 @@
 "settings.events.visibility.gridAndList" = "Сетка и список";
 "settings.events.visibility.listOnly" = "Только список";
 "settings.events.visibility.hidden" = "Скрыто";
+"settings.events.calendarCountShown" = "календарей: %d из %d";
+"settings.events.calendarsInGroup.sub" = "Галочка здесь переносит календарь в эту группу. Показывать его или нет решает галочка под группой в списке.";

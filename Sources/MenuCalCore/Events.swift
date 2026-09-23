@@ -126,16 +126,24 @@ public struct EventSettings: Codable, Equatable, Sendable {
   public var showsDots: Bool
   /// Dots on the days of adjacent months, paler like the dates themselves.
   public var showsDotsInAdjacentMonths: Bool
+  /// Calendars the user unticked. They stay in their group, so ticking them again is one click
+  /// and nothing has to be rebuilt; keeping only a child's timetable out of a whole account is
+  /// unticking the rest.
+  public var hiddenCalendarIDs: Set<String>
 
-  public init(isEnabled: Bool = true, groups: [EventGroup] = [], showsDots: Bool = true, showsDotsInAdjacentMonths: Bool = true) {
+  public init(
+    isEnabled: Bool = true, groups: [EventGroup] = [], showsDots: Bool = true,
+    showsDotsInAdjacentMonths: Bool = true, hiddenCalendarIDs: Set<String> = []
+  ) {
     self.isEnabled = isEnabled
     self.groups = Array(groups.prefix(EventGroup.maximumCount))
     self.showsDots = showsDots
     self.showsDotsInAdjacentMonths = showsDotsInAdjacentMonths
+    self.hiddenCalendarIDs = hiddenCalendarIDs
   }
 
   private enum CodingKeys: String, CodingKey {
-    case isEnabled, groups, showsDots, showsDotsInAdjacentMonths
+    case isEnabled, groups, showsDots, showsDotsInAdjacentMonths, hiddenCalendarIDs
   }
 
   /// A file written before a key existed still reads; the missing key takes its default.
@@ -145,14 +153,26 @@ public struct EventSettings: Codable, Equatable, Sendable {
     groups = Array((try container.decodeIfPresent([EventGroup].self, forKey: .groups) ?? []).prefix(EventGroup.maximumCount))
     showsDots = try container.decodeIfPresent(Bool.self, forKey: .showsDots) ?? true
     showsDotsInAdjacentMonths = try container.decodeIfPresent(Bool.self, forKey: .showsDotsInAdjacentMonths) ?? true
+    hiddenCalendarIDs = try container.decodeIfPresent(Set<String>.self, forKey: .hiddenCalendarIDs) ?? []
   }
 
   public func group(of calendarID: String) -> EventGroup? {
     groups.first { $0.calendarIDs.contains(calendarID) }
   }
 
+  /// In a group, so the settings know it; hidden or not is a separate question.
   public func isShown(_ calendarID: String) -> Bool {
     group(of: calendarID) != nil
+  }
+
+  /// In a group that shows in the list, and not unticked: the calendar's events are seen.
+  public func isVisible(_ calendarID: String) -> Bool {
+    guard let group = group(of: calendarID), group.showsInList else { return false }
+    return !hiddenCalendarIDs.contains(calendarID)
+  }
+
+  public mutating func setVisible(_ calendarID: String, _ visible: Bool) {
+    if visible { hiddenCalendarIDs.remove(calendarID) } else { hiddenCalendarIDs.insert(calendarID) }
   }
 
   /// The grid slot of a group: its position among the groups that show in the grid, or nil
@@ -263,8 +283,8 @@ public struct EventIndicatorProvider: IndicatorProvider {
     var seen: Set<Int> = []
     var result: [DayIndicator] = []
     for event in index.events(on: day, calendar: calendar) {
-      guard let group = settings.group(of: event.calendarID), let slot = settings.gridSlot(of: group.id),
-        !seen.contains(slot)
+      guard settings.isVisible(event.calendarID), let group = settings.group(of: event.calendarID),
+        let slot = settings.gridSlot(of: group.id), !seen.contains(slot)
       else { continue }
       seen.insert(slot)
       result.append(DayIndicator(kind: .events(slot: slot, paletteIndex: group.paletteIndex), title: group.name))
@@ -301,7 +321,7 @@ public enum EventListBuilder {
   ) -> [EventRow] {
     let events = index.events(on: day, calendar: calendar)
     let shown = events.compactMap { event -> (EventItem, EventGroup)? in
-      guard let group = settings.group(of: event.calendarID), group.showsInList else { return nil }
+      guard settings.isVisible(event.calendarID), let group = settings.group(of: event.calendarID) else { return nil }
       return (event, group)
     }
     let sorted = shown.sorted { a, b in

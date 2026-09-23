@@ -159,3 +159,5 @@
 "settings.events.visibility.gridAndList" = "Сітка і список";
 "settings.events.visibility.listOnly" = "Лише список";
 "settings.events.visibility.hidden" = "Приховано";
+"settings.events.calendarCountShown" = "календарів: %d із %d";
+"settings.events.calendarsInGroup.sub" = "Позначка тут переносить календар у цю групу. Показувати його чи ні вирішує позначка під групою в списку.";
