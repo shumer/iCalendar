@@ -24,6 +24,8 @@ and Compact sizes. The translucent background picks up what is behind the calend
   highlight weekends, and see the full selected date below the grid.
 - **Public holidays.** Mark nationwide public holidays in red, using your system region or a
   country you choose. Hover over a holiday or select it to see its name.
+- **Vacation.** Mark your own days off: click the first day, Shift-click the last and press
+  **Vacation**, or right-click a day. They show as a green band and stay on your Mac.
 - **A native macOS look.** Light, Dark or System appearance, your system accent or a custom
   colour, and Regular or Compact spacing. Liquid Glass on macOS 26 and later, with a material
   fallback on older supported versions.
@@ -87,7 +89,7 @@ make them.
 | Pane | What you can change |
 | --- | --- |
 | **General** | Date format, menu bar icon, launch at login, global shortcut and automatic update checks |
-| **Calendar** | First day of the week, week numbers, full date line, weekend highlighting, public holidays and country, current or last viewed month on opening |
+| **Calendar** | First day of the week, week numbers, full date line, weekend highlighting, public holidays and country, your vacations with names, current or last viewed month on opening |
 | **Appearance** | System / Light / Dark theme, system or custom accent colour, Regular / Compact size |
 | **About** | Version and update status |
 
@@ -108,6 +110,14 @@ For example, with an English locale on September 18, 2026 at 14:30:
 
 Patterns use Unicode date format symbols. Letter case matters: `MM` is the month and `mm`
 is minutes. If a pattern is invalid, MenuCal keeps the last working format.
+
+### Vacation
+
+Click the first day of your vacation, Shift-click the last one and press **Vacation** in the
+footer. Shift and the arrow keys do the same from the keyboard, and a right-click on any day
+marks or unmarks that day alone. Vacations are a green band behind the days; a public holiday
+inside one stays red. **Settings > Calendar** lists them, lets you name or delete them, and can
+hide them all. Nothing about them leaves your Mac.
 
 ### Public holidays
 

@@ -139,7 +139,10 @@ func preferencesTests(_ run: TestRun) {
     let defaults = scratchDefaults()
     let preferences = Preferences(defaults: defaults)
     t.expect(preferences.marksHolidays)
+    t.expect(preferences.showsVacation)
     t.expectEqual(preferences.holidayCountry, nil)
+    preferences.showsVacation = false
+    t.expect(!Preferences(defaults: defaults).showsVacation)
     preferences.marksHolidays = false
     preferences.holidayCountry = "UA"
     let reread = Preferences(defaults: defaults)

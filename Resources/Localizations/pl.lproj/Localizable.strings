@@ -99,3 +99,14 @@
 "settings.holidays.country.system" = "Region systemu (%@)";
 "settings.holidays.country.systemUnknown" = "Region systemu (brak listy świąt)";
 "settings.holidays.note" = "Tylko oficjalne dni wolne w całym kraju. Lista jest pobierana z date.nager.at mniej więcej raz w miesiącu, wysyłany jest tylko kod kraju.";
+
+"vacation.title" = "Urlop";
+"vacation.mark" = "Oznacz jako urlop";
+"vacation.remove" = "Usuń urlop";
+"vacation.cancel" = "Anuluj";
+"vacation.dayCount" = "dni: %d";
+"settings.vacation.toggle" = "Pokazuj urlopy";
+"settings.vacation.empty" = "Brak urlopów. W kalendarzu kliknij pierwszy dzień, kliknij ostatni z Shiftem i naciśnij „Urlop”, albo kliknij dzień prawym przyciskiem.";
+"settings.vacation.namePlaceholder" = "Nazwa";
+"settings.vacation.delete" = "Usuń urlop";
+"settings.vacation.note" = "Urlopy są zielone w kalendarzu i pozostają na tym Macu.";

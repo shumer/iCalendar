@@ -17,6 +17,9 @@ public struct CalendarState: Equatable, Sendable {
   public private(set) var monthChangeCount: Int
   /// Counts returns to today, which pulse the today cell.
   public private(set) var todayPulseCount: Int
+  /// The other end of a range selection, set by Shift-click or Shift-arrows. Nil while a single
+  /// day is selected. It lives across month changes, so a range can span the month's edge.
+  public private(set) var rangeAnchor: Date?
 
   public init(now: Date, calendar: Calendar) {
     let today = calendar.startOfDay(for: now)
@@ -27,6 +30,7 @@ public struct CalendarState: Equatable, Sendable {
     lastDirection = .none
     monthChangeCount = 0
     todayPulseCount = 0
+    rangeAnchor = nil
   }
 
   // MARK: Opening
@@ -38,6 +42,7 @@ public struct CalendarState: Equatable, Sendable {
     selectedDate = today
     selectionFollowsToday = true
     lastDirection = .none
+    rangeAnchor = nil
     if !remembersMonth {
       displayedMonth = CalendarEngine.startOfMonth(for: today, calendar: calendar)
     }
@@ -86,8 +91,38 @@ public struct CalendarState: Equatable, Sendable {
     selectedDate = day
     focusedDate = day
     selectionFollowsToday = false
+    rangeAnchor = nil
     show(day, calendar: calendar)
   }
+
+  /// Shift-click: the days from the selection to `date` become the range. The anchor is the
+  /// end that stays put, so a second Shift-click moves the other end.
+  public mutating func extendSelection(to date: Date, calendar: Calendar) {
+    let day = calendar.startOfDay(for: date)
+    if rangeAnchor == nil { rangeAnchor = selectedDate }
+    selectedDate = day
+    focusedDate = day
+    selectionFollowsToday = false
+    show(day, calendar: calendar)
+  }
+
+  /// Shift-arrows: the same, one step at a time from the focused day.
+  public mutating func extendSelection(byDays days: Int, calendar: Calendar) {
+    extendSelection(to: CalendarNavigator.day(byAdding: days, to: focusedDate, calendar: calendar), calendar: calendar)
+  }
+
+  /// Esc or Cancel on the action bar: back to the single selected day.
+  public mutating func clearRange() {
+    rangeAnchor = nil
+  }
+
+  /// The selected days in order: one day, or the range between the anchor and the selection.
+  public var selectedRange: ClosedRange<Date> {
+    guard let rangeAnchor else { return selectedDate...selectedDate }
+    return min(rangeAnchor, selectedDate)...max(rangeAnchor, selectedDate)
+  }
+
+  public var hasRange: Bool { rangeAnchor != nil && rangeAnchor != selectedDate }
 
   /// `T`, `Cmd+T` and the Today button. Always selects today, even on the current month.
   public mutating func goToToday(now: Date, calendar: Calendar) {
@@ -95,6 +130,7 @@ public struct CalendarState: Equatable, Sendable {
     selectedDate = today
     focusedDate = today
     selectionFollowsToday = true
+    rangeAnchor = nil
     todayPulseCount += 1
     show(today, calendar: calendar)
   }
@@ -118,6 +154,7 @@ public struct CalendarState: Equatable, Sendable {
     }
     displayedMonth = CalendarEngine.startOfMonth(for: displayedMonth, calendar: calendar)
     focusedDate = wasOnSelection ? selectedDate : calendar.startOfDay(for: focusedDate)
+    rangeAnchor = rangeAnchor.map { calendar.startOfDay(for: $0) }
     lastDirection = .none
   }
 

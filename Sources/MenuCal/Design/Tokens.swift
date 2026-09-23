@@ -68,6 +68,9 @@ enum Tokens {
   }
 
   enum Ring {
+    static let vacationBand: CGFloat = 1
+    /// The today circle sits this far inside the band, so the band shows as a green rim around it.
+    static let todayInsetInBand: CGFloat = 2
     static let selected: CGFloat = 1.5
     static let selectedHighContrast: CGFloat = 2
     static let todaySelectedRim: CGFloat = 2
@@ -79,6 +82,13 @@ enum Tokens {
   enum Opacity {
     static let todayInAdjacentMonth: Double = 0.55
     static let dayOffInAdjacentMonth: Double = 0.45
+    /// The vacation band: a tint behind the day, darker in the dark appearance where a light
+    /// tint on glass disappears.
+    static let vacationFillLight: Double = 0.13
+    static let vacationFillDark: Double = 0.19
+    static let vacationLineLight: Double = 0.42
+    static let vacationLineDark: Double = 0.52
+    static let vacationInAdjacentMonth: Double = 0.45
   }
 
   enum Scale {
@@ -133,6 +143,7 @@ enum Palette {
   static let onAccent = Color.white
   /// A day nobody works: a highlighted weekend day or a public holiday.
   static let dayOff = Color(nsColor: .systemRed)
+  static let vacation = Color(nsColor: .systemGreen)
   static let hoverFill = Color(nsColor: .quaternarySystemFill)
   static let pressedFill = Color(nsColor: .tertiarySystemFill)
   static let separator = Color(nsColor: .separatorColor)

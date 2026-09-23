@@ -79,6 +79,7 @@ public final class Preferences {
     static let lastUpdateCheck = "updates.lastCheck"
     static let marksHolidays = "holidays.enabled"
     static let holidayCountry = "holidays.country"
+    static let showsVacation = "vacation.enabled"
   }
 
   /// The stored value for "the pattern is hand written".
@@ -165,6 +166,10 @@ public final class Preferences {
     }
   }
 
+  public var showsVacation: Bool {
+    didSet { defaults.set(showsVacation, forKey: Key.showsVacation) }
+  }
+
   public var lastUpdateCheck: Date? {
     didSet {
       if let lastUpdateCheck {
@@ -228,6 +233,7 @@ public final class Preferences {
     marksHolidays = flag(Key.marksHolidays, true)
     holidayCountry = defaults.string(forKey: Key.holidayCountry)
       .flatMap { HolidayFeed.supportedCountries.contains($0) ? $0 : nil }
+    showsVacation = flag(Key.showsVacation, true)
     lastUpdateCheck = (defaults.object(forKey: Key.lastUpdateCheck) as? Double)
       .map { Date(timeIntervalSinceReferenceDate: $0) }
   }

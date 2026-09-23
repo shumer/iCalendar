@@ -4,8 +4,9 @@
 
 MenuCal is a macOS menu bar agent that shows a configurable date and opens a month calendar
 under it, in the Liquid Glass language of macOS 26 and later. It is deliberately narrow: no
-events, no reminders, no time zones, no accounts; public holidays are the one thing it downloads
-(ADR 0004). Its one reason to exist is finish, so a change
+reminders, no time zones, no accounts of its own; public holidays are the one thing it downloads
+(ADR 0004), vacations are the user's own days kept on the Mac (ADR 0005), and events, when they
+come, are read from the system's calendars and never fetched by the app itself. Its one reason to exist is finish, so a change
 that works but departs from `docs/DesignSpec.md` by more than a point is not done. It must never
 wake the CPU on a timer it does not need, and never hard-code a calendar fact (first weekday,
 month names, days per month).

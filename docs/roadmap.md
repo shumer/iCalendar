@@ -45,7 +45,15 @@
 - **After 0.1.** Official public holidays of the system region, or of a country picked in
   settings, are red in the grid, named in the tooltip, in VoiceOver and in the footer. ADR 0004.
 
+- **Vacation.** The user's own days off as a green band behind the days, made from a range
+  (click, Shift-click, Vacation) or the right-click menu, listed and named in Calendar settings.
+  ADR 0005.
+
 ## Next
+
+- **Events from the system's calendars**, read only through EventKit: a settings tree of
+  accounts and calendars, up to three dots per day, the day's list inside the panel. The design
+  is in `docs/design/events-and-vacation.html`, sections B to E.
 
 - Go through what `docs/manual-checklist.md` lists as never watched: keyboard and scroll in the
   panel, the shortcut recorder, launch at login after a reboot, a VoiceOver pass, Instruments.

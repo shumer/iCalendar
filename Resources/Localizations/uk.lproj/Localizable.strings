@@ -99,3 +99,14 @@
 "settings.holidays.country.system" = "Регіон системи (%@)";
 "settings.holidays.country.systemUnknown" = "Регіон системи (списку свят немає)";
 "settings.holidays.note" = "Лише офіційні вихідні для всієї країни. Список завантажується з date.nager.at приблизно раз на місяць, передається лише код країни.";
+
+"vacation.title" = "Відпустка";
+"vacation.mark" = "Позначити як відпустку";
+"vacation.remove" = "Прибрати відпустку";
+"vacation.cancel" = "Скасувати";
+"vacation.dayCount" = "днів: %d";
+"settings.vacation.toggle" = "Показувати відпустки";
+"settings.vacation.empty" = "Відпусток поки немає. У календарі клацніть перший день, Shift-клацніть останній і натисніть «Відпустка», або клацніть день правою кнопкою.";
+"settings.vacation.namePlaceholder" = "Назва";
+"settings.vacation.delete" = "Видалити відпустку";
+"settings.vacation.note" = "Відпустка в календарі зелена і зберігається лише на цьому Mac.";

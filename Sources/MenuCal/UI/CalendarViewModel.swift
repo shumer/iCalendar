@@ -14,6 +14,7 @@ final class CalendarViewModel {
 
   let preferences: Preferences
   let holidays: HolidayStore
+  let vacations: VacationStore
 
   private(set) var state: CalendarState
   private(set) var grid: MonthGrid
@@ -21,6 +22,8 @@ final class CalendarViewModel {
   private(set) var footerText = ""
   /// The short date and the name of the holiday, when the selected day is one.
   private(set) var selectedHoliday: (date: String, name: String)?
+  /// The vacation's name, or the word "Vacation", when the selected day is one.
+  private(set) var selectedVacationName: String?
   /// The keyboard focus ring appears with the first key press, as it does in AppKit lists.
   private(set) var showsFocusRing = false
   var hoveredDay: Date?
@@ -31,12 +34,17 @@ final class CalendarViewModel {
   @ObservationIgnored private var formatters: GridFormatters
   @ObservationIgnored private var footerFormatter = DateFormatter()
   @ObservationIgnored private var shortFooterFormatter = DateFormatter()
+  @ObservationIgnored private var rangeFormatter = DateFormatter()
   @ObservationIgnored private var scroll = ScrollAccumulator()
   @ObservationIgnored private let now: () -> Date
 
-  init(preferences: Preferences, holidays: HolidayStore, now: @escaping () -> Date = Date.init) {
+  init(
+    preferences: Preferences, holidays: HolidayStore, vacations: VacationStore,
+    now: @escaping () -> Date = Date.init
+  ) {
     self.preferences = preferences
     self.holidays = holidays
+    self.vacations = vacations
     self.now = now
     let calendar = Self.systemCalendar(preferences)
     let locale = Locale.autoupdatingCurrent
@@ -63,6 +71,8 @@ final class CalendarViewModel {
       _ = holidays.revision
       _ = preferences.marksHolidays
       _ = preferences.holidayCountry
+      _ = preferences.showsVacation
+      _ = vacations.list
     } onChange: { [weak self] in
       Task { @MainActor in
         self?.rebuild()
@@ -139,6 +149,59 @@ final class CalendarViewModel {
   func showNextMonth() { changeMonth { $0.showMonth(byAdding: 1, calendar: calendar) } }
   func goToToday() { changeMonth { $0.goToToday(now: now(), calendar: calendar) } }
   func select(_ day: DayCellModel) { changeMonth { $0.select(day.date, calendar: calendar) } }
+  func extendSelection(to day: DayCellModel) { changeMonth { $0.extendSelection(to: day.date, calendar: calendar) } }
+  func clearRange() { changeMonth { $0.clearRange() } }
+
+  // MARK: Vacation
+
+  /// What the footer's action bar offers for the selected days: nothing for a plain day that is
+  /// not a vacation, "Vacation" for a range, "Remove" when every selected day is one already.
+  enum VacationAction: Equatable {
+    case add, remove
+  }
+
+  var vacationAction: VacationAction? {
+    guard preferences.showsVacation else { return nil }
+    let range = state.selectedRange
+    if vacations.covers(from: range.lowerBound, to: range.upperBound, calendar: calendar) { return .remove }
+    return state.hasRange ? .add : nil
+  }
+
+  /// The action bar's text: "23 Sep - 2 Oct  ·  10 days", or for one day its date and, when it
+  /// is a vacation, the vacation's name.
+  var selectedRangeText: String {
+    let range = state.selectedRange
+    guard range.lowerBound != range.upperBound else {
+      return [shortFooterFormatter.string(from: range.lowerBound), selectedVacationName]
+        .compactMap { $0 }.joined(separator: "  ·  ")
+    }
+    let count = VacationCalendar.dayCount(
+      from: VacationCalendar.key(for: range.lowerBound, calendar: calendar),
+      to: VacationCalendar.key(for: range.upperBound, calendar: calendar), calendar: calendar)
+    return rangeFormatter.string(from: range.lowerBound) + " - " + rangeFormatter.string(from: range.upperBound)
+      + "  ·  " + L("vacation.dayCount", count)
+  }
+
+  func markVacation() {
+    let range = state.selectedRange
+    vacations.add(from: range.lowerBound, to: range.upperBound, calendar: calendar)
+    changeMonth { $0.clearRange() }
+  }
+
+  func unmarkVacation() {
+    let range = state.selectedRange
+    vacations.remove(from: range.lowerBound, to: range.upperBound, calendar: calendar)
+    changeMonth { $0.clearRange() }
+  }
+
+  /// The context menu of one day: a plain day can be marked on its own, without a range.
+  func markVacation(_ day: DayCellModel) {
+    vacations.add(from: day.date, to: day.date, calendar: calendar)
+  }
+
+  func unmarkVacation(_ day: DayCellModel) {
+    vacations.remove(from: day.date, to: day.date, calendar: calendar)
+  }
 
   func hover(_ day: Date, isInside: Bool) {
     if isInside {
@@ -164,7 +227,10 @@ final class CalendarViewModel {
     switch Int(event.keyCode) {
     case 123, 124:  // Left and right arrows.
       let step = event.keyCode == 124 ? forward : -forward
-      if flags == [.option] {
+      if flags == [.shift] {
+        changeMonth { $0.extendSelection(byDays: step, calendar: calendar) }
+        showsFocusRing = true
+      } else if flags == [.option] {
         changeMonth { $0.showMonth(byAdding: step, calendar: calendar) }
       } else if flags == [.command, .shift] {
         changeMonth { $0.showYear(byAdding: step, calendar: calendar) }
@@ -175,8 +241,15 @@ final class CalendarViewModel {
       }
       return true
     case 125, 126:  // Down and up arrows.
-      guard flags.isEmpty else { return false }
-      moveFocus(byDays: event.keyCode == 125 ? 7 : -7)
+      let step = event.keyCode == 125 ? 7 : -7
+      if flags == [.shift] {
+        changeMonth { $0.extendSelection(byDays: step, calendar: calendar) }
+        showsFocusRing = true
+      } else if flags.isEmpty {
+        moveFocus(byDays: step)
+      } else {
+        return false
+      }
       return true
     case 36, 76, 49:  // Return, Enter, Space.
       guard flags.isEmpty else { return false }
@@ -241,14 +314,27 @@ final class CalendarViewModel {
   }
 
   private func rebuild() {
-    let provider = holidayCalendar()
     grid = CalendarEngine.makeGrid(
       for: state.displayedMonth, today: today, calendar: calendar, locale: locale,
-      formatters: formatters, indicatorProvider: provider)
+      formatters: formatters, indicatorProvider: indicatorProvider())
     footerText = footerFormatter.string(from: state.selectedDate)
-    selectedHoliday = provider?.name(on: state.selectedDate, calendar: calendar).map {
+    selectedHoliday = holidayCalendar()?.name(on: state.selectedDate, calendar: calendar).map {
       (shortFooterFormatter.string(from: state.selectedDate), $0)
     }
+    if preferences.showsVacation,
+      let range = vacations.list.range(containing: VacationCalendar.key(for: state.selectedDate, calendar: calendar))
+    {
+      selectedVacationName = range.name.isEmpty ? L("vacation.title") : range.name
+    } else {
+      selectedVacationName = nil
+    }
+  }
+
+  private func indicatorProvider() -> (any IndicatorProvider)? {
+    var providers: [any IndicatorProvider] = []
+    if let holidays = holidayCalendar() { providers.append(holidays) }
+    if preferences.showsVacation, !vacations.list.isEmpty { providers.append(VacationCalendar(vacations.list)) }
+    return providers.isEmpty ? nil : CompositeIndicatorProvider(providers)
   }
 
   private func holidayCalendar() -> HolidayCalendar? {
@@ -277,6 +363,14 @@ final class CalendarViewModel {
     short.timeZone = calendar.timeZone
     short.setLocalizedDateFormatFromTemplate("EdMMM")
     shortFooterFormatter = short
+
+    // No weekday in a range: two of them do not fit the footer.
+    let brief = DateFormatter()
+    brief.calendar = calendar
+    brief.locale = locale
+    brief.timeZone = calendar.timeZone
+    brief.setLocalizedDateFormatFromTemplate("dMMM")
+    rangeFormatter = brief
   }
 
   private static func systemCalendar(_ preferences: Preferences) -> Calendar {
