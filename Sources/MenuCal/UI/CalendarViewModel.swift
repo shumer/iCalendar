@@ -15,6 +15,8 @@ final class CalendarViewModel {
   let preferences: Preferences
   let holidays: HolidayStore
   let vacations: VacationStore
+  let events: EventStore
+  let eventSettings: EventSettingsStore
 
   private(set) var state: CalendarState
   private(set) var grid: MonthGrid
@@ -24,6 +26,9 @@ final class CalendarViewModel {
   private(set) var selectedHoliday: (date: String, name: String)?
   /// The vacation's name, or the word "Vacation", when the selected day is one.
   private(set) var selectedVacationName: String?
+  /// The day's list, open under the grid. It follows the selection while open.
+  private(set) var isDayListOpen = false
+  private(set) var dayRows: [EventRow] = []
   /// The keyboard focus ring appears with the first key press, as it does in AppKit lists.
   private(set) var showsFocusRing = false
   var hoveredDay: Date?
@@ -35,16 +40,20 @@ final class CalendarViewModel {
   @ObservationIgnored private var footerFormatter = DateFormatter()
   @ObservationIgnored private var shortFooterFormatter = DateFormatter()
   @ObservationIgnored private var rangeFormatter = DateFormatter()
+  @ObservationIgnored private var timeFormatter = DateFormatter()
   @ObservationIgnored private var scroll = ScrollAccumulator()
   @ObservationIgnored private let now: () -> Date
 
   init(
     preferences: Preferences, holidays: HolidayStore, vacations: VacationStore,
+    events: EventStore, eventSettings: EventSettingsStore,
     now: @escaping () -> Date = Date.init
   ) {
     self.preferences = preferences
     self.holidays = holidays
     self.vacations = vacations
+    self.events = events
+    self.eventSettings = eventSettings
     self.now = now
     let calendar = Self.systemCalendar(preferences)
     let locale = Locale.autoupdatingCurrent
@@ -73,6 +82,9 @@ final class CalendarViewModel {
       _ = preferences.holidayCountry
       _ = preferences.showsVacation
       _ = vacations.list
+      _ = events.revision
+      _ = events.access
+      _ = eventSettings.settings
     } onChange: { [weak self] in
       Task { @MainActor in
         self?.rebuild()
@@ -88,7 +100,19 @@ final class CalendarViewModel {
 
   var panelSize: CGSize {
     metrics.panelSize(
-      showsWeekNumbers: preferences.showsWeekNumbers, showsFooter: preferences.showsFullDate)
+      showsWeekNumbers: preferences.showsWeekNumbers, showsFooter: preferences.showsFullDate,
+      showsDayList: isDayListOpen)
+  }
+
+  /// Events are on when the user wants them, the system allows them and a group shows in the
+  /// grid; only then do day circles make room for the dots.
+  var showsEventDots: Bool {
+    eventSettings.settings.isEnabled && eventSettings.settings.showsDots && events.access == .granted
+      && eventSettings.settings.groups.contains(where: \.showsInGrid)
+  }
+
+  var showsEvents: Bool {
+    eventSettings.settings.isEnabled && events.access == .granted
   }
 
   /// The system accent, or the colour picked in Appearance settings.
@@ -118,6 +142,7 @@ final class CalendarViewModel {
 
   func didClose() {
     preferences.lastViewedMonth = state.displayedMonth
+    isDayListOpen = false
     hoveredDay = nil
     hoveredControl = nil
   }
@@ -148,7 +173,23 @@ final class CalendarViewModel {
   func showPreviousMonth() { changeMonth { $0.showMonth(byAdding: -1, calendar: calendar) } }
   func showNextMonth() { changeMonth { $0.showMonth(byAdding: 1, calendar: calendar) } }
   func goToToday() { changeMonth { $0.goToToday(now: now(), calendar: calendar) } }
-  func select(_ day: DayCellModel) { changeMonth { $0.select(day.date, calendar: calendar) } }
+  func select(_ day: DayCellModel) {
+    changeMonth { $0.select(day.date, calendar: calendar) }
+    // A day with events opens its list; an open list stays open and follows the selection.
+    if day.hasEvents, showsEvents, !isDayListOpen { setDayList(open: true) }
+  }
+
+  func setDayList(open: Bool) {
+    guard isDayListOpen != open else { return }
+    withAnimation(Motion.monthChange) {
+      isDayListOpen = open
+    }
+    rebuild()
+  }
+
+  func toggleDayList() { setDayList(open: !isDayListOpen) }
+
+  func openInCalendar(_ row: EventRow) { events.open(eventID: row.id) }
   func extendSelection(to day: DayCellModel) { changeMonth { $0.extendSelection(to: day.date, calendar: calendar) } }
   func clearRange() { changeMonth { $0.clearRange() } }
 
@@ -251,7 +292,13 @@ final class CalendarViewModel {
         return false
       }
       return true
-    case 36, 76, 49:  // Return, Enter, Space.
+    case 36, 76:  // Return and Enter select and open the day's list when there is one.
+      guard flags.isEmpty else { return false }
+      showsFocusRing = true
+      changeMonth { $0.selectFocused(calendar: calendar) }
+      if showsEvents { setDayList(open: true) }
+      return true
+    case 49:  // Space.
       guard flags.isEmpty else { return false }
       showsFocusRing = true
       changeMonth { $0.selectFocused(calendar: calendar) }
@@ -321,6 +368,7 @@ final class CalendarViewModel {
     selectedHoliday = holidayCalendar()?.name(on: state.selectedDate, calendar: calendar).map {
       (shortFooterFormatter.string(from: state.selectedDate), $0)
     }
+    rebuildDayRows()
     if preferences.showsVacation,
       let range = vacations.list.range(containing: VacationCalendar.key(for: state.selectedDate, calendar: calendar))
     {
@@ -334,7 +382,23 @@ final class CalendarViewModel {
     var providers: [any IndicatorProvider] = []
     if let holidays = holidayCalendar() { providers.append(holidays) }
     if preferences.showsVacation, !vacations.list.isEmpty { providers.append(VacationCalendar(vacations.list)) }
+    if showsEventDots {
+      events.ensureLoaded(around: state.displayedMonth, calendar: calendar)
+      providers.append(EventIndicatorProvider(index: events.eventIndex, settings: eventSettings.settings))
+    }
     return providers.isEmpty ? nil : CompositeIndicatorProvider(providers)
+  }
+
+  private func rebuildDayRows() {
+    guard isDayListOpen, showsEvents else {
+      dayRows = []
+      return
+    }
+    events.ensureLoaded(around: state.displayedMonth, calendar: calendar)
+    dayRows = EventListBuilder.rows(
+      for: state.selectedDate, index: events.eventIndex, settings: eventSettings.settings,
+      calendars: events.calendarsByID, calendar: calendar, timeFormatter: timeFormatter,
+      allDayText: L("events.allDay"))
   }
 
   private func holidayCalendar() -> HolidayCalendar? {
@@ -371,6 +435,13 @@ final class CalendarViewModel {
     brief.timeZone = calendar.timeZone
     brief.setLocalizedDateFormatFromTemplate("dMMM")
     rangeFormatter = brief
+
+    let time = DateFormatter()
+    time.calendar = calendar
+    time.locale = locale
+    time.timeZone = calendar.timeZone
+    time.setLocalizedDateFormatFromTemplate("jmm")
+    timeFormatter = time
   }
 
   private static func systemCalendar(_ preferences: Preferences) -> Calendar {

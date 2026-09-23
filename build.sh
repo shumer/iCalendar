@@ -78,6 +78,9 @@ cat > "$APP/Contents/Info.plist" <<PLIST
   <key>CFBundleLocalizations</key><array>$LOCALIZATIONS</array>
   <key>NSPrincipalClass</key><string>NSApplication</string>
   <key>NSHighResolutionCapable</key><true/>
+  <!-- Events are read from the system's calendars; macOS shows this text when it asks. -->
+  <key>NSCalendarsFullAccessUsageDescription</key>
+  <string>MenuCal shows the events of your calendars in its month grid and day list. It only reads them.</string>
   <!-- Agent app: no Dock icon, no application menu. -->
   <key>LSUIElement</key><true/>
 </dict>
@@ -99,12 +102,15 @@ fi
 if [ "${CODESIGN_IDENTITY:-}" = "-" ]; then
   CODESIGN_IDENTITY=""
 fi
+# The one entitlement: the hardened runtime shows no calendar permission dialog without it.
+ENTITLEMENTS="$HERE/MenuCal.entitlements"
 if [ -n "${CODESIGN_IDENTITY:-}" ]; then
-  codesign --force --options runtime --timestamp --sign "$CODESIGN_IDENTITY" "$APP"
+  codesign --force --options runtime --timestamp --entitlements "$ENTITLEMENTS" \
+    --sign "$CODESIGN_IDENTITY" "$APP"
   codesign --verify --strict --verbose=1 "$APP"
   echo "Signed with: $CODESIGN_IDENTITY"
 else
-  codesign --force --sign - "$APP" 2>/dev/null || echo "(ad-hoc signing skipped)"
+  codesign --force --entitlements "$ENTITLEMENTS" --sign - "$APP" 2>/dev/null || echo "(ad-hoc signing skipped)"
 fi
 
 echo "Built: $APP"

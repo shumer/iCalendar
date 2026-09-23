@@ -58,7 +58,7 @@ Then, before writing the commit:
   relax any of the three, and keep the asset URL pinned to this repository's releases.
 - **The zip asset is named `MenuCal-<version>-<build>.zip`.** The updater looks for that shape;
   rename it in the workflow and in `ReleaseFeed` together or not at all.
-- **No sandbox, no entitlements, no third party code**: ADR 0002 and ADR 0003.
+- **No sandbox, one entitlement (calendars), no third party code**: ADR 0002, ADR 0003, ADR 0005.
 - **Versions.** `VERSION` is the marketing number, bumped by hand. The build number is
   `git rev-list --count HEAD`.
 

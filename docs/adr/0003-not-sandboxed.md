@@ -11,8 +11,11 @@ outside the sandbox, which is exactly the nested code ADR 0002 decided not to ca
 
 ## Decision
 
-No App Sandbox. The hardened runtime is on, with no entitlements file at all: the app asks for
-no exception, so it cannot load unsigned code, use JIT memory or read `DYLD_` variables.
+No App Sandbox. The hardened runtime is on. The entitlements file holds exactly one key,
+`com.apple.security.personal-information.calendars`, added with ADR 0005: without it the
+hardened runtime never shows the calendar permission dialog, and `requestFullAccessToEvents`
+answers false in silence. The app asks for no other exception, so it cannot load unsigned
+code, use JIT memory or read `DYLD_` variables.
 
 ## What limits the app instead
 

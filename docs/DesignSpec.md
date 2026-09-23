@@ -17,7 +17,8 @@ this file; when the two disagree, this file wins and the code is the bug.
 
 Not part of v1, by design: the month and year quick picker (NAV-4 of the brief, concept A does
 not have one), reminders, time zones, accounts of the app's own. Public holidays were added
-after 0.1 and vacations after 0.3 at the customer's request; events follow (ADR 0005).
+after 0.1, vacations after 0.3 and events from the system's calendars after 0.4, at the
+customer's request (ADR 0005).
 
 ## 2. Container
 
@@ -56,6 +57,10 @@ Density setting and keeps the same layout.
 | `gridRowSpacing` | 2 | 2 |
 | `weekNumberColumnWidth` | 28 | 24 |
 | `footerHeight` | 36 | 30 |
+| `dayCircleWithDots` | 30 | 26 |
+| `eventDotSize` / `eventDotSpacing` | 4 / 3 | 4 / 2 |
+| `dayListHeight` (the panel grows by this, in place of the footer) | 146 | 120 |
+| `eventRowHeight` / `eventTimeWidth` | 28 / 52 | 24 / 46 |
 | `menuBarGap` | 6 | 6 |
 | `screenEdgeMargin` | 8 | 8 |
 
@@ -94,6 +99,7 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | `text.secondary` | `secondaryLabelColor` |
 | `text.adjacentMonth`, `text.weekNumber` | `tertiaryLabelColor` |
 | `text.dayOff` (highlighted weekends, public holidays) | `systemRed` |
+| `group.palette` (event groups) | `systemIndigo`, `systemOrange`, `systemTeal`, `systemPurple`, `systemBrown`, `systemYellow`, in that order |
 | `band.vacation` | `systemGreen` at 13% (dark: 19%) fill, 1 pt line at 42% (dark: 52%) |
 | `accent` | `controlAccentColor` |
 | `text.onAccent` | `white` |
@@ -114,6 +120,7 @@ Semantic colours only. There are no hex values in the app; `Tokens.swift` holds 
 | Vacation | a `band.vacation` capsule behind the day, the height of the day circle, joined across the column spacing to the next vacation day in the row; a single day is a full capsule. The number keeps its colour. 45% opacity in an adjacent month. The name (or "Vacation") is the tooltip, part of the VoiceOver label and in the footer |
 | Today in a vacation | the today circle inset 2 pt, so the band shows as a green rim around it |
 | Range selection | every day from the anchor to the selection gets the selected ring |
+| Event dots | with events on, the day circle is 30 pt (Compact: 26) at the top of the 36 pt cell and a strip of 4 pt dots with 3 pt spacing sits under it, one dot per group in the group's slot, at most three; 45% opacity in an adjacent month, or none when the setting says so |
 | Hover | `fill.hover` circle |
 | Pressed | `fill.pressed` circle, scale 0.94 on the circle only, the hit area does not move |
 | Selected | 1.5 pt accent ring inside the circle, semibold |
@@ -191,6 +198,10 @@ The status item's width is never animated.
 - While a range is selected, or the selected day is a vacation, the footer is an action bar: the
   range ("23 Sep - 2 Oct  ·  10 days") on the left, Cancel and Vacation or Remove on the right.
   Esc drops the range before it closes the panel. ADR 0005 has the interaction.
+- A click on a day with events, or Return on it, opens the day's list in place of the footer;
+  the list follows the selection while open and closes with its chevron or Esc. Rows: the time
+  (all-day rows first, with the word for it in a smaller weight), a 3 x 15 pt mark in the group's
+  colour, the title; a double click opens the event in Calendar. ADR 0005.
 - Public holidays are official days off for the whole country of the system region, or of the
   country picked in settings. See `docs/adr/0004-public-holidays.md`.
 - Midnight, a time zone change and waking from sleep recompute today. A date the user picked stays

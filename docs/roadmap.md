@@ -49,11 +49,15 @@
   (click, Shift-click, Vacation) or the right-click menu, listed and named in Calendar settings.
   ADR 0005.
 
+- **Events.** Read from the system's calendars through EventKit: groups of calendars with a
+  colour and a slot, up to three dots per day, the day's list inside the panel, the Events pane
+  with an Edit sheet per group and the vacations table. ADR 0005, amended.
+
 ## Next
 
-- **Events from the system's calendars**, read only through EventKit: a settings tree of
-  accounts and calendars, up to three dots per day, the day's list inside the panel. The design
-  is in `docs/design/events-and-vacation.html`, sections B to E.
+- **Week view** in the day's list ("Week" in its header, the week number column opening it) and
+  the **pin** that turns the panel into a window that survives losing focus: sections C of the
+  design. A vacation colour other than green: section 5.
 
 - Go through what `docs/manual-checklist.md` lists as never watched: keyboard and scroll in the
   panel, the shortcut recorder, launch at login after a reboot, a VoiceOver pass, Instruments.
