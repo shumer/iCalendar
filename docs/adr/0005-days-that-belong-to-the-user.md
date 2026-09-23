@@ -46,7 +46,9 @@ inside the panel. What shipped, after the designer's sections B to E:
 - **Dots.** One per group with events that day, 4 pt in a strip under the day; the circle
   shrinks from 36 to 30 pt inside the same cell, so nothing moves. A group can be kept out of
   the grid without leaving the list: a school timetable every weekday is a dot that says
-  nothing.
+  nothing. Amended the same day: the customer read the "in grid" checkbox as "show" and took
+  the list for a bug, so a group now has three states, "Grid and list", "List only" and
+  "Hidden"; the last takes it out of both and keeps its calendars.
 - **The day's list** opens inside the panel in place of the footer, which grows by 146 pt and
   then scrolls: a second window would close a transient panel the moment it took the focus.
   All-day events first, a time column, a mark in the group's colour (a three letter tag under

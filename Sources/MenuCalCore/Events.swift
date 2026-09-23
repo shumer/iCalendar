@@ -61,18 +61,58 @@ public struct EventGroup: Codable, Equatable, Identifiable, Sendable {
   /// How many groups the grid can show; the rest live in the day's list.
   public static let gridSlots = 3
 
+  /// Where a group's events appear. A timetable that runs every weekday is better kept out of
+  /// the grid and in the list; a group nobody wants to see for a while is hidden without losing
+  /// which calendars it holds.
+  public enum Visibility: String, Codable, CaseIterable, Sendable {
+    case gridAndList
+    case listOnly
+    case hidden
+  }
+
   public let id: UUID
   public var name: String
   public var paletteIndex: Int
-  public var showsInGrid: Bool
+  public var visibility: Visibility
   public var calendarIDs: [String]
 
-  public init(id: UUID = UUID(), name: String, paletteIndex: Int, showsInGrid: Bool = true, calendarIDs: [String] = []) {
+  public init(id: UUID = UUID(), name: String, paletteIndex: Int, visibility: Visibility = .gridAndList, calendarIDs: [String] = []) {
     self.id = id
     self.name = name
     self.paletteIndex = ((paletteIndex % Self.paletteSize) + Self.paletteSize) % Self.paletteSize
-    self.showsInGrid = showsInGrid
+    self.visibility = visibility
     self.calendarIDs = calendarIDs
+  }
+
+  public var showsInGrid: Bool { visibility == .gridAndList }
+  public var showsInList: Bool { visibility != .hidden }
+
+  private enum CodingKeys: String, CodingKey {
+    case id, name, paletteIndex, visibility, calendarIDs, showsInGrid
+  }
+
+  /// Files from 0.5 hold `showsInGrid` instead of `visibility`.
+  public init(from decoder: any Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    id = try container.decode(UUID.self, forKey: .id)
+    name = try container.decode(String.self, forKey: .name)
+    let palette = try container.decode(Int.self, forKey: .paletteIndex)
+    paletteIndex = ((palette % Self.paletteSize) + Self.paletteSize) % Self.paletteSize
+    calendarIDs = try container.decodeIfPresent([String].self, forKey: .calendarIDs) ?? []
+    if let stored = try container.decodeIfPresent(Visibility.self, forKey: .visibility) {
+      visibility = stored
+    } else {
+      visibility = (try container.decodeIfPresent(Bool.self, forKey: .showsInGrid) ?? true) ? .gridAndList : .listOnly
+    }
+  }
+
+  public func encode(to encoder: any Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(id, forKey: .id)
+    try container.encode(name, forKey: .name)
+    try container.encode(paletteIndex, forKey: .paletteIndex)
+    try container.encode(visibility, forKey: .visibility)
+    try container.encode(calendarIDs, forKey: .calendarIDs)
   }
 }
 
@@ -261,7 +301,7 @@ public enum EventListBuilder {
   ) -> [EventRow] {
     let events = index.events(on: day, calendar: calendar)
     let shown = events.compactMap { event -> (EventItem, EventGroup)? in
-      guard let group = settings.group(of: event.calendarID) else { return nil }
+      guard let group = settings.group(of: event.calendarID), group.showsInList else { return nil }
       return (event, group)
     }
     let sorted = shown.sorted { a, b in

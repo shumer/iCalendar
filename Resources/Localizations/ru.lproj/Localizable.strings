@@ -122,7 +122,6 @@
 "settings.events.addGroup" = "Добавить группу";
 "settings.events.newGroup" = "Новая группа";
 "settings.events.groupName" = "Название";
-"settings.events.inGrid" = "В сетке";
 "settings.events.removeGroup" = "Удалить группу";
 "settings.events.color.indigo" = "Индиго";
 "settings.events.color.orange" = "Оранжевый";
@@ -137,10 +136,8 @@
 "events.openInCalendar" = "Открыть в Календаре";
 "events.listLabel" = "События %@";
 "settings.events.access.granted.sub" = "Разрешён. MenuCal только читает и никогда не пишет.";
-"settings.events.groups.note" = "Группа, а не календарь: цвет и точка принадлежат группе, внутрь можно сложить сколько угодно календарей. В сетке точку получают не больше трёх групп. Снятый флажок «в сетке» ничего не прячет: события остаются в списке дня.";
 "settings.events.edit" = "Изменить…";
 "settings.events.editGroup" = "Группа";
-"settings.events.inGrid.long" = "Показывать точку в сетке месяца";
 "settings.events.calendarsInGroup" = "Календари в этой группе";
 "settings.events.inOtherGroup" = "в группе %@";
 "settings.events.done" = "Готово";
@@ -157,3 +154,8 @@
 "settings.vacation.unnamed" = "Без названия";
 "settings.vacation.add" = "Добавить отпуск";
 "settings.vacation.addConfirm" = "Добавить";
+"settings.events.groups.note" = "Группа, а не календарь: цвет и точка принадлежат группе, внутрь можно сложить сколько угодно календарей. В сетке точку получают не больше трёх групп. «Только список» убирает группу из сетки, но оставляет в списке дня; «Скрыто» убирает отовсюду, календари при этом остаются в группе.";
+"settings.events.visibility" = "Показывать";
+"settings.events.visibility.gridAndList" = "Сетка и список";
+"settings.events.visibility.listOnly" = "Только список";
+"settings.events.visibility.hidden" = "Скрыто";

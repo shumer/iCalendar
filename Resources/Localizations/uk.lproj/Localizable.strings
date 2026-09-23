@@ -122,7 +122,6 @@
 "settings.events.addGroup" = "Додати групу";
 "settings.events.newGroup" = "Нова група";
 "settings.events.groupName" = "Назва";
-"settings.events.inGrid" = "У сітці";
 "settings.events.removeGroup" = "Видалити групу";
 "settings.events.color.indigo" = "Індиго";
 "settings.events.color.orange" = "Помаранчевий";
@@ -137,10 +136,8 @@
 "events.openInCalendar" = "Відкрити в Календарі";
 "events.listLabel" = "Події %@";
 "settings.events.access.granted.sub" = "Дозволено. MenuCal лише читає і ніколи не пише.";
-"settings.events.groups.note" = "Група, а не календар: колір і крапка належать групі, всередину можна скласти скільки завгодно календарів. У сітці крапку отримують не більше трьох груп. Знятий прапорець «у сітці» нічого не ховає: події лишаються у списку дня.";
 "settings.events.edit" = "Змінити…";
 "settings.events.editGroup" = "Група";
-"settings.events.inGrid.long" = "Показувати крапку в сітці місяця";
 "settings.events.calendarsInGroup" = "Календарі в цій групі";
 "settings.events.inOtherGroup" = "у групі %@";
 "settings.events.done" = "Готово";
@@ -157,3 +154,8 @@
 "settings.vacation.unnamed" = "Без назви";
 "settings.vacation.add" = "Додати відпустку";
 "settings.vacation.addConfirm" = "Додати";
+"settings.events.groups.note" = "Група, а не календар: колір і крапка належать групі, всередину можна скласти скільки завгодно календарів. У сітці крапку отримують не більше трьох груп. «Лише список» прибирає групу із сітки, але лишає у списку дня; «Приховано» прибирає звідусіль, календарі при цьому лишаються в групі.";
+"settings.events.visibility" = "Показувати";
+"settings.events.visibility.gridAndList" = "Сітка і список";
+"settings.events.visibility.listOnly" = "Лише список";
+"settings.events.visibility.hidden" = "Приховано";

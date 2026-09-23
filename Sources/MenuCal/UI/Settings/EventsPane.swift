@@ -147,8 +147,7 @@ struct EventsPane: View {
           .truncationMode(.middle)
       }
       Spacer(minLength: 12)
-      Toggle(L("settings.events.inGrid"), isOn: Binding(get: { group.showsInGrid }, set: { value in store.update { $0.update(id: group.id) { $0.showsInGrid = value } } }))
-        .toggleStyle(.checkbox)
+      VisibilityPicker(group: group, store: store)
         .fixedSize()
       Button(L("settings.events.edit")) { sheets.editingGroupID = group.id }
         .controlSize(.small)
@@ -165,6 +164,21 @@ struct EventsPane: View {
     let account = accountTitles.count == 1 ? accountTitles[0] : accountTitles.joined(separator: ", ")
     if members.count == 1 { return account + "  ·  " + members[0].title }
     return account + "  ·  " + L("settings.events.calendarCount", members.count)
+  }
+}
+
+/// Where a group's events show: the grid and the list, the list only, or nowhere for now.
+private struct VisibilityPicker: View {
+  let group: EventGroup
+  let store: EventSettingsStore
+
+  var body: some View {
+    Picker(L("settings.events.visibility"), selection: Binding(get: { group.visibility }, set: { value in store.update { $0.update(id: group.id) { $0.visibility = value } } })) {
+      Text(L("settings.events.visibility.gridAndList")).tag(EventGroup.Visibility.gridAndList)
+      Text(L("settings.events.visibility.listOnly")).tag(EventGroup.Visibility.listOnly)
+      Text(L("settings.events.visibility.hidden")).tag(EventGroup.Visibility.hidden)
+    }
+    .labelsHidden()
   }
 }
 
@@ -225,8 +239,9 @@ private struct GroupEditorSheet: View {
             }
           }
         }
-        Toggle(L("settings.events.inGrid.long"), isOn: Binding(get: { group.showsInGrid }, set: { value in store.update { $0.update(id: groupID) { $0.showsInGrid = value } } }))
-          .toggleStyle(.checkbox)
+        LabeledContent(L("settings.events.visibility")) {
+          VisibilityPicker(group: group, store: store)
+        }
 
         Text(L("settings.events.calendarsInGroup"))
           .font(.callout)

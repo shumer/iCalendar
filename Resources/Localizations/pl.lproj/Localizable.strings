@@ -122,7 +122,6 @@
 "settings.events.addGroup" = "Dodaj grupę";
 "settings.events.newGroup" = "Nowa grupa";
 "settings.events.groupName" = "Nazwa";
-"settings.events.inGrid" = "W siatce";
 "settings.events.removeGroup" = "Usuń grupę";
 "settings.events.color.indigo" = "Indygo";
 "settings.events.color.orange" = "Pomarańczowy";
@@ -137,10 +136,8 @@
 "events.openInCalendar" = "Otwórz w Kalendarzu";
 "events.listLabel" = "Wydarzenia %@";
 "settings.events.access.granted.sub" = "Przyznany. MenuCal tylko czyta i nigdy nie zapisuje.";
-"settings.events.groups.note" = "Grupa, nie kalendarz: kolor i kropka należą do grupy, a do środka można włożyć dowolną liczbę kalendarzy. W siatce kropkę dostają najwyżej trzy grupy. Odznaczone „w siatce” niczego nie ukrywa: wydarzenia zostają na liście dnia.";
 "settings.events.edit" = "Zmień…";
 "settings.events.editGroup" = "Grupa";
-"settings.events.inGrid.long" = "Pokazuj kropkę w siatce miesiąca";
 "settings.events.calendarsInGroup" = "Kalendarze w tej grupie";
 "settings.events.inOtherGroup" = "w grupie %@";
 "settings.events.done" = "Gotowe";
@@ -157,3 +154,8 @@
 "settings.vacation.unnamed" = "Bez nazwy";
 "settings.vacation.add" = "Dodaj urlop";
 "settings.vacation.addConfirm" = "Dodaj";
+"settings.events.groups.note" = "Grupa, nie kalendarz: kolor i kropka należą do grupy, a do środka można włożyć dowolną liczbę kalendarzy. W siatce kropkę dostają najwyżej trzy grupy. „Tylko lista” usuwa grupę z siatki, ale zostawia na liście dnia; „Ukryte” usuwa zewsząd, kalendarze pozostają w grupie.";
+"settings.events.visibility" = "Pokazuj";
+"settings.events.visibility.gridAndList" = "Siatka i lista";
+"settings.events.visibility.listOnly" = "Tylko lista";
+"settings.events.visibility.hidden" = "Ukryte";
