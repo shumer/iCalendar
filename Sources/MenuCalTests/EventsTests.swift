@@ -94,7 +94,7 @@ func eventsTests(_ run: TestRun) {
     formatter.calendar = calendar
     formatter.timeZone = calendar.timeZone
     formatter.dateFormat = "HH:mm"
-    t.expectEqual(EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, allDayText: "").count, 1)
+    t.expectEqual(EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: formatter, allDayText: "").count, 1)
   }
 
   run.test("events land on every day they touch, and a midnight end stays on its day") { t in
@@ -155,7 +155,7 @@ func eventsTests(_ run: TestRun) {
     formatter.timeZone = calendar.timeZone
     formatter.dateFormat = "HH:mm"
     t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 0)
-    t.expectEqual(EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, allDayText: "").count, 0)
+    t.expectEqual(EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: formatter, allDayText: "").count, 0)
     t.expect(settings.isShown(school.id), "the calendar still belongs to the group")
 
     let oldJSON = "{\"isEnabled\":true,\"groups\":[{\"id\":\"6B3B9F2E-1D1E-4E1D-9A1B-2C3D4E5F6A7B\",\"name\":\"Old\",\"paletteIndex\":1,\"showsInGrid\":false,\"calendarIDs\":[\"x\"]}]}"
@@ -178,7 +178,7 @@ func eventsTests(_ run: TestRun) {
     formatter.calendar = calendar
     formatter.timeZone = calendar.timeZone
     formatter.dateFormat = "HH:mm"
-    let rows = EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, allDayText: "")
+    let rows = EventListBuilder.rows(for: day, index: index, settings: settings, calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: formatter, allDayText: "")
     t.expectEqual(rows.map(\.id), ["s"], "only the timetable is left")
     t.expectEqual(EventIndicatorProvider(index: index, settings: settings).indicators(for: day, calendar: calendar).count, 1, "the group still has a dot from the timetable")
     t.expect(settings.isShown(personal.id) && !settings.isVisible(personal.id))
@@ -205,15 +205,46 @@ func eventsTests(_ run: TestRun) {
     formatter.locale = Locale(identifier: "ru_RU")
     formatter.timeZone = calendar.timeZone
     formatter.setLocalizedDateFormatFromTemplate("jmm")
+    let dayFormatter = DateFormatter()
+    dayFormatter.calendar = calendar
+    dayFormatter.locale = Locale(identifier: "ru_RU")
+    dayFormatter.timeZone = calendar.timeZone
+    dayFormatter.setLocalizedDateFormatFromTemplate("dMMM")
     let rows = EventListBuilder.rows(
       for: day, index: EventIndex(events: events, calendar: calendar), settings: settings,
-      calendars: byID, calendar: calendar, timeFormatter: formatter, allDayText: "весь день")
+      calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: dayFormatter, allDayText: "весь день")
     t.expectEqual(rows.map(\.id), ["all", "early", "late"])
-    t.expectEqual(rows[0].timeText, "весь день")
-    t.expectEqual(rows[1].timeText, "08:30")
+    t.expectEqual(rows[0].startText, "весь день")
+    t.expectEqual(rows[0].endText, "")
+    t.expectEqual(rows[1].startText, "08:30")
+    t.expectEqual(rows[1].endText, "09:00")
+    t.expectEqual(rows[1].durationMinutes, 30)
     t.expectEqual(rows[1].calendarTitle, "Личное")
     t.expectEqual(rows[1].groupName, "Google")
     t.expectEqual(rows[0].calendarColor, school.color)
-    t.expectEqual(rows[1].accessibilityLabel, "08:30, Врач, Личное")
+
+    let onlySchool = EventListBuilder.rows(
+      for: day, index: EventIndex(events: events, calendar: calendar), settings: settings,
+      calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: dayFormatter, allDayText: "весь день",
+      onlyGroups: [settings.groups[0].id])
+    t.expectEqual(onlySchool.count, 3, "the filter is by group, and all three are Google")
+    let none = EventListBuilder.rows(
+      for: day, index: EventIndex(events: events, calendar: calendar), settings: settings,
+      calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: dayFormatter, allDayText: "",
+      onlyGroups: [settings.groups[1].id])
+    t.expectEqual(none.count, 0, "Exchange has nothing shown that day")
+
+    // An event that goes on past this day shows the end's date instead of its time.
+    let trip = [EventItem(id: "trip", calendarID: personal.id, title: "Поездка", start: at(2026, 9, 24, 18), end: at(2026, 9, 26, 12), isAllDay: false)]
+    let tripRows = EventListBuilder.rows(
+      for: day, index: EventIndex(events: trip, calendar: calendar), settings: settings,
+      calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: dayFormatter, allDayText: "")
+    t.expectEqual(tripRows[0].startText, "18:00")
+    t.expect(tripRows[0].endText.contains("26"), tripRows[0].endText)
+    let secondDay = EventListBuilder.rows(
+      for: at(2026, 9, 25), index: EventIndex(events: trip, calendar: calendar), settings: settings,
+      calendars: byID, calendar: calendar, timeFormatter: formatter, dayFormatter: dayFormatter, allDayText: "")
+    t.expect(secondDay[0].startText.contains("24"), secondDay[0].startText)
+    t.expectEqual(secondDay[0].durationMinutes, 42 * 60)
   }
 }

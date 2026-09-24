@@ -161,3 +161,10 @@
 "settings.events.visibility.hidden" = "Hidden";
 "settings.events.calendarCountShown" = "%d of %d calendars";
 "settings.events.calendarsInGroup.sub" = "Ticking a calendar here moves it into this group. Whether it shows is the tick under the group in the list.";
+"events.untitled" = "Untitled";
+"events.none.group" = "No events  ·  %@";
+"events.none.group.spoken" = "No events in %@";
+"events.chips" = "Groups";
+"events.chip.shown" = "only this group";
+"events.chip.hidden" = "not chosen";
+"events.spokenRange" = "from %@ to %@";

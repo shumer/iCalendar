@@ -27,6 +27,13 @@ struct Metrics: Equatable, Sendable {
   let dayListHeight: CGFloat
   let eventRowHeight: CGFloat
   let eventTimeWidth: CGFloat
+  let eventMarkSize: CGSize
+  /// The row of group chips under the list's header, present with two groups or more.
+  let groupChipRowHeight: CGFloat
+  let groupChipPaddingH: CGFloat
+  let groupChipSpacing: CGFloat
+  let groupChipMaxWidth: CGFloat
+  let groupChipDot: CGFloat
 
   /// Concentric: the radius of a surface nested in the panel is the panel's minus the padding.
   var innerCornerRadius: CGFloat { panelCornerRadius - panelPadding }
@@ -61,7 +68,9 @@ struct Metrics: Equatable, Sendable {
     navButtonSize: CGSize(width: 28, height: 24), todayButtonHorizontalPadding: 8,
     weekdayRowHeight: 20, dayCellSize: 36, gridColumnSpacing: 4, gridRowSpacing: 2,
     weekNumberColumnWidth: 28, footerHeight: 36, dayCircleWithDots: 30, eventDotSize: 4,
-    eventDotSpacing: 3, dayListHeight: 146, eventRowHeight: 28, eventTimeWidth: 52)
+    eventDotSpacing: 3, dayListHeight: 164, eventRowHeight: 32, eventTimeWidth: 52,
+    eventMarkSize: CGSize(width: 3, height: 16), groupChipRowHeight: 20, groupChipPaddingH: 8,
+    groupChipSpacing: 4, groupChipMaxWidth: 64, groupChipDot: 6)
 
   static let compact = Metrics(
     panelCornerRadius: 20, panelPadding: 10, sectionSpacing: 6, headerHeight: 28,
@@ -69,7 +78,9 @@ struct Metrics: Equatable, Sendable {
     navButtonSize: CGSize(width: 24, height: 20), todayButtonHorizontalPadding: 6,
     weekdayRowHeight: 16, dayCellSize: 30, gridColumnSpacing: 2, gridRowSpacing: 2,
     weekNumberColumnWidth: 24, footerHeight: 30, dayCircleWithDots: 26, eventDotSize: 4,
-    eventDotSpacing: 2, dayListHeight: 120, eventRowHeight: 24, eventTimeWidth: 46)
+    eventDotSpacing: 2, dayListHeight: 144, eventRowHeight: 28, eventTimeWidth: 46,
+    eventMarkSize: CGSize(width: 3, height: 14), groupChipRowHeight: 18, groupChipPaddingH: 6,
+    groupChipSpacing: 4, groupChipMaxWidth: 56, groupChipDot: 6)
 }
 
 enum Tokens {
@@ -104,6 +115,10 @@ enum Tokens {
     static let vacationLineLight: Double = 0.42
     static let vacationLineDark: Double = 0.52
     static let vacationInAdjacentMonth: Double = 0.45
+    /// A chosen group chip: a tint of the group's colour with a firmer line.
+    static let chipFillLight: Double = 0.16
+    static let chipFillDark: Double = 0.22
+    static let chipLine: Double = 0.40
   }
 
   enum Scale {
@@ -131,8 +146,10 @@ struct Typography: Equatable, Sendable {
   var footer: Font { .system(size: footerSize, weight: .medium) }
   var chevron: Font { .system(size: chevronSize, weight: .semibold) }
   var eventTime: Font { .system(size: footerSize - 1, weight: .regular).monospacedDigit() }
+  var eventEndTime: Font { .system(size: footerSize - 2, weight: .regular).monospacedDigit() }
   var eventTitle: Font { .system(size: footerSize, weight: .regular) }
   var eventAllDay: Font { .system(size: footerSize - 2, weight: .medium) }
+  var groupChip: Font { .system(size: weekdaySize, weight: .medium) }
   var listHeader: Font { .system(size: footerSize, weight: .semibold) }
 
   func day(isToday: Bool, isSelected: Bool) -> Font {

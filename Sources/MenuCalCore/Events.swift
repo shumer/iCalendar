@@ -295,33 +295,40 @@ public struct EventIndicatorProvider: IndicatorProvider {
 
 // MARK: - The day's list
 
-/// One row of the day's list, ready to draw: the time text is made once, here, and never in
+/// One row of the day's list, ready to draw: the time texts are made once, here, and never in
 /// the view.
 public struct EventRow: Equatable, Identifiable, Sendable {
   public let id: String
+  /// Empty when the event has no title; the view shows a word for that.
   public let title: String
-  public let timeText: String
+  /// The start, or the start's short date when the event began on an earlier day.
+  public let startText: String
+  /// The end, or the end's short date when the event goes on past this day. Empty for an
+  /// all-day event.
+  public let endText: String
+  public let durationMinutes: Int
   public let isAllDay: Bool
   public let calendarColor: AccentComponents
+  public let groupID: UUID
   public let groupPaletteIndex: Int
   public let groupName: String
   public let calendarTitle: String
-
-  public var accessibilityLabel: String {
-    "\(timeText), \(title), \(calendarTitle)"
-  }
 }
 
 public enum EventListBuilder {
   /// The events of a day that the settings show, all-day ones first, then by start, with the
-  /// group of each. `allDayText` is the localised word for the time column of an all-day row.
+  /// group of each. `onlyGroups` narrows the list to those groups; empty means all of them.
+  /// `allDayText` is the localised word for the time column of an all-day row.
   public static func rows(
     for day: Date, index: EventIndex, settings: EventSettings, calendars: [String: CalendarInfo],
-    calendar: Calendar, timeFormatter: DateFormatter, allDayText: String
+    calendar: Calendar, timeFormatter: DateFormatter, dayFormatter: DateFormatter, allDayText: String,
+    onlyGroups: Set<UUID> = []
   ) -> [EventRow] {
     let events = index.events(on: day, calendar: calendar)
     let shown = events.compactMap { event -> (EventItem, EventGroup)? in
-      guard settings.isVisible(event.calendarID), let group = settings.group(of: event.calendarID) else { return nil }
+      guard settings.isVisible(event.calendarID), let group = settings.group(of: event.calendarID),
+        onlyGroups.isEmpty || onlyGroups.contains(group.id)
+      else { return nil }
       return (event, group)
     }
     let sorted = shown.sorted { a, b in
@@ -329,14 +336,21 @@ public enum EventListBuilder {
       if a.0.start != b.0.start { return a.0.start < b.0.start }
       return a.0.title < b.0.title
     }
+    let dayStart = calendar.startOfDay(for: day)
     return sorted.map { event, group in
       let info = calendars[event.calendarID]
+      let startsToday = calendar.isDate(event.start, inSameDayAs: dayStart)
+      // An end at exactly midnight belongs to the day before.
+      let endsToday = calendar.isDate(event.end.addingTimeInterval(-1), inSameDayAs: dayStart)
+      let minutes = Int((event.end.timeIntervalSince(event.start) / 60).rounded())
       return EventRow(
-        id: event.id, title: event.title,
-        timeText: event.isAllDay ? allDayText : timeFormatter.string(from: event.start),
+        id: event.id, title: event.title.trimmingCharacters(in: .whitespacesAndNewlines),
+        startText: event.isAllDay ? allDayText : (startsToday ? timeFormatter.string(from: event.start) : dayFormatter.string(from: event.start)),
+        endText: event.isAllDay ? "" : (endsToday ? timeFormatter.string(from: event.end) : dayFormatter.string(from: event.end)),
+        durationMinutes: max(0, minutes),
         isAllDay: event.isAllDay,
         calendarColor: info?.color ?? AccentComponents(red: 0.5, green: 0.5, blue: 0.5),
-        groupPaletteIndex: group.paletteIndex, groupName: group.name,
+        groupID: group.id, groupPaletteIndex: group.paletteIndex, groupName: group.name,
         calendarTitle: info?.title ?? "")
     }
   }
