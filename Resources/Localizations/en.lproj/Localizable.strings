@@ -165,6 +165,7 @@
 "events.none.group" = "No events  ·  %@";
 "events.none.group.spoken" = "No events in %@";
 "events.chips" = "Groups";
-"events.chip.shown" = "only this group";
 "events.chip.hidden" = "not chosen";
 "events.spokenRange" = "from %@ to %@";
+"events.chip.shown" = "chosen";
+"events.chip.hint" = "Click to add or remove the group; Command-click to keep only it.";

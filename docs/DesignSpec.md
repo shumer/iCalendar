@@ -204,8 +204,10 @@ The status item's width is never animated.
 - A click on a day with events, or Return on it, opens the day's list in place of the footer;
   the list follows the selection while open and closes with its chevron or Esc. Under the
   header, with two groups or more, a row of chips, one per group that is not hidden: a click
-  keeps only that group, a second click brings all back, Command-click adds a group. The filter
-  lives for this run of the app, is not stored, and the chips show it. Rows: the start over the
+  adds the group to the filter or takes it out, so several can be looked at together;
+  Command-click keeps only that group; no chip chosen means all. A chip widens to its full name
+  under the pointer. The filter lives for this run of the app, is not stored, and the chips
+  show it. Rows: the start over the
   end in the time column (11 pt secondary over 10 pt tertiary, right aligned; a short date
   instead of a time when the event began or ends on another day; all-day rows first with the
   word for it), a 3 x 16 pt mark in the group's colour, the title, or "Untitled" in tertiary

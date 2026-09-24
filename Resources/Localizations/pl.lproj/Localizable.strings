@@ -165,6 +165,7 @@
 "events.none.group" = "Brak wydarzeń  ·  %@";
 "events.none.group.spoken" = "Brak wydarzeń w grupie %@";
 "events.chips" = "Grupy";
-"events.chip.shown" = "tylko ta grupa";
 "events.chip.hidden" = "nie wybrana";
 "events.spokenRange" = "od %@ do %@";
+"events.chip.shown" = "wybrana";
+"events.chip.hint" = "Kliknięcie dodaje lub usuwa grupę; Cmd-kliknięcie zostawia tylko ją.";

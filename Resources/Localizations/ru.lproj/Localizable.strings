@@ -165,6 +165,7 @@
 "events.none.group" = "Событий нет  ·  %@";
 "events.none.group.spoken" = "Нет событий группы %@";
 "events.chips" = "Группы";
-"events.chip.shown" = "только эта группа";
 "events.chip.hidden" = "не выбрана";
 "events.spokenRange" = "с %@ до %@";
+"events.chip.shown" = "выбрана";
+"events.chip.hint" = "Клик добавляет или убирает группу; Cmd-клик оставляет только её.";

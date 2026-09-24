@@ -91,7 +91,7 @@ struct DayListView: View {
       ForEach(model.filterChips) { group in
         let chosen = model.listFilter.contains(group.id)
         Button {
-          model.toggleFilter(group.id, additive: NSApp.currentEvent?.modifierFlags.contains(.command) == true)
+          model.toggleFilter(group.id, only: NSApp.currentEvent?.modifierFlags.contains(.command) == true)
         } label: {
           HStack(spacing: 4) {
             if differentiateWithoutColor {
@@ -112,7 +112,7 @@ struct DayListView: View {
           .foregroundStyle(chosen ? Palette.primary : Palette.secondary)
           .padding(.horizontal, metrics.groupChipPaddingH)
           .frame(height: metrics.groupChipRowHeight)
-          .frame(maxWidth: metrics.groupChipMaxWidth)
+          .frame(maxWidth: model.hoveredChip == group.id ? nil : metrics.groupChipMaxWidth)
           .background(chipFill(group, chosen: chosen), in: Capsule())
           .overlay {
             if chosen {
@@ -124,9 +124,14 @@ struct DayListView: View {
         }
         .buttonStyle(ChipButtonStyle())
         .focusable(false)
+        .onHover { inside in
+          if inside { model.hoveredChip = group.id } else if model.hoveredChip == group.id { model.hoveredChip = nil }
+        }
+        .animation(Motion.hover, value: model.hoveredChip)
         .help(group.name)
         .accessibilityLabel(group.name)
         .accessibilityValue(chosen ? L("events.chip.shown") : L("events.chip.hidden"))
+        .accessibilityHint(L("events.chip.hint"))
         .accessibilityAddTraits(chosen ? [.isSelected] : [])
       }
       Spacer(minLength: 0)

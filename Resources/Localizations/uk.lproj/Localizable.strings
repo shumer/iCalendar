@@ -165,6 +165,7 @@
 "events.none.group" = "Подій немає  ·  %@";
 "events.none.group.spoken" = "Немає подій групи %@";
 "events.chips" = "Групи";
-"events.chip.shown" = "лише ця група";
 "events.chip.hidden" = "не вибрана";
 "events.spokenRange" = "з %@ до %@";
+"events.chip.shown" = "вибрана";
+"events.chip.hint" = "Клац додає або прибирає групу; Cmd-клац лишає лише її.";

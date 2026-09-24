@@ -198,18 +198,22 @@ final class CalendarViewModel {
     return groups.count > 1 ? groups : []
   }
 
-  /// A click keeps only this group, a second click brings all back; with Command, the group
-  /// joins or leaves the set instead.
-  func toggleFilter(_ groupID: UUID, additive: Bool) {
-    if additive {
-      if listFilter.contains(groupID) { listFilter.remove(groupID) } else { listFilter.insert(groupID) }
-    } else if listFilter == [groupID] {
-      listFilter = []
+  /// A click adds the group to the filter or takes it out, so several groups can be looked at
+  /// together; with Command, the click keeps only this group. No group chosen means all.
+  func toggleFilter(_ groupID: UUID, only: Bool) {
+    if only {
+      listFilter = listFilter == [groupID] ? [] : [groupID]
+    } else if listFilter.contains(groupID) {
+      listFilter.remove(groupID)
     } else {
-      listFilter = [groupID]
+      listFilter.insert(groupID)
     }
     rebuild()
   }
+
+  /// The chip under the pointer widens to its full name, so a cut name is read without waiting
+  /// for the tooltip.
+  var hoveredChip: UUID?
 
   /// "Школа" or "Школа, Работа": the groups the list is narrowed to, for the empty state.
   var filterNames: String {
