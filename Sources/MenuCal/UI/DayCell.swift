@@ -103,6 +103,15 @@ private struct DayCellStyle: ButtonStyle {
         background(isPressed: configuration.isPressed)
       }
       .frame(width: size, height: size, alignment: showsDots ? .top : .center)
+      // The band spans the cell, not the circle: with dots on the circle is narrower than the
+      // cell, and a band the circle's width would break between days.
+      .background(alignment: showsDots ? .top : .center) {
+        if let segment = day.vacationSegment {
+          VacationBand(segment: segment, columnSpacing: metrics.gridColumnSpacing, isDark: isDark)
+            .frame(height: circle)
+            .opacity(day.isInCurrentMonth ? 1 : Tokens.Opacity.vacationInAdjacentMonth)
+        }
+      }
       .overlay(alignment: .bottom) {
         if showsDots, day.isInCurrentMonth || showsAdjacentDots {
           HStack(spacing: metrics.eventDotSpacing) {
@@ -136,10 +145,6 @@ private struct DayCellStyle: ButtonStyle {
   @ViewBuilder
   private func background(isPressed: Bool) -> some View {
     ZStack {
-      if let segment = day.vacationSegment {
-        VacationBand(segment: segment, columnSpacing: metrics.gridColumnSpacing, isDark: isDark)
-          .opacity(day.isInCurrentMonth ? 1 : Tokens.Opacity.vacationInAdjacentMonth)
-      }
       Circle()
         .inset(by: day.isToday && day.isVacation ? Tokens.Ring.todayInsetInBand : 0)
         .fill(fill(isPressed: isPressed))
