@@ -161,3 +161,11 @@
 "settings.events.visibility.hidden" = "Ukryte";
 "settings.events.calendarCountShown" = "kalendarze: %d z %d";
 "settings.events.calendarsInGroup.sub" = "Zaznaczenie tutaj przenosi kalendarz do tej grupy. O tym, czy jest pokazywany, decyduje zaznaczenie pod grupą na liście.";
+"events.untitled" = "Bez nazwy";
+"events.none.group" = "Brak wydarzeń  ·  %@";
+"events.none.group.spoken" = "Brak wydarzeń w grupie %@";
+"events.chips" = "Grupy";
+"events.chip.hidden" = "nie wybrana";
+"events.spokenRange" = "od %@ do %@";
+"events.chip.shown" = "wybrana";
+"events.chip.hint" = "Kliknięcie dodaje lub usuwa grupę; Cmd-kliknięcie zostawia tylko ją.";

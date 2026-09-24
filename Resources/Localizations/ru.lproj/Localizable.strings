@@ -161,3 +161,11 @@
 "settings.events.visibility.hidden" = "Скрыто";
 "settings.events.calendarCountShown" = "календарей: %d из %d";
 "settings.events.calendarsInGroup.sub" = "Галочка здесь переносит календарь в эту группу. Показывать его или нет решает галочка под группой в списке.";
+"events.untitled" = "Без названия";
+"events.none.group" = "Событий нет  ·  %@";
+"events.none.group.spoken" = "Нет событий группы %@";
+"events.chips" = "Группы";
+"events.chip.hidden" = "не выбрана";
+"events.spokenRange" = "с %@ до %@";
+"events.chip.shown" = "выбрана";
+"events.chip.hint" = "Клик добавляет или убирает группу; Cmd-клик оставляет только её.";

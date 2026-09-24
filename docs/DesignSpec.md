@@ -59,8 +59,11 @@ Density setting and keeps the same layout.
 | `footerHeight` | 36 | 30 |
 | `dayCircleWithDots` | 30 | 26 |
 | `eventDotSize` / `eventDotSpacing` | 4 / 3 | 4 / 2 |
-| `dayListHeight` (the panel grows by this, in place of the footer) | 146 | 120 |
-| `eventRowHeight` / `eventTimeWidth` | 28 / 52 | 24 / 46 |
+| `dayListHeight` (the panel grows by this, in place of the footer) | 164 | 144 |
+| `eventRowHeight` / `eventTimeWidth` | 32 / 52 | 28 / 46 |
+| `eventMarkSize` | 3 x 16 | 3 x 14 |
+| `groupChipRowHeight` / `groupChipPaddingH` / `groupChipSpacing` | 20 / 8 / 4 | 18 / 6 / 4 |
+| `groupChipMaxWidth` / `groupChipDot` | 64 / 6 | 56 / 6 |
 | `menuBarGap` | 6 | 6 |
 | `screenEdgeMargin` | 8 | 8 |
 
@@ -199,9 +202,17 @@ The status item's width is never animated.
   range ("23 Sep - 2 Oct  ·  10 days") on the left, Cancel and Vacation or Remove on the right.
   Esc drops the range before it closes the panel. ADR 0005 has the interaction.
 - A click on a day with events, or Return on it, opens the day's list in place of the footer;
-  the list follows the selection while open and closes with its chevron or Esc. Rows: the time
-  (all-day rows first, with the word for it in a smaller weight), a 3 x 15 pt mark in the group's
-  colour, the title; a double click opens the event in Calendar. ADR 0005.
+  the list follows the selection while open and closes with its chevron or Esc. Under the
+  header, with two groups or more, a row of chips, one per group that is not hidden: a click
+  adds the group to the filter or takes it out, so several can be looked at together;
+  Command-click keeps only that group; no chip chosen means all. A chip widens to its full name
+  under the pointer. The filter lives for this run of the app, is not stored, and the chips
+  show it. Rows: the start over the
+  end in the time column (11 pt secondary over 10 pt tertiary, right aligned; a short date
+  instead of a time when the event began or ends on another day; all-day rows first with the
+  word for it), a 3 x 16 pt mark in the group's colour, the title, or "Untitled" in tertiary
+  when there is none. The tooltip carries the range, the duration and the calendar; a double
+  click opens the event in Calendar. ADR 0005.
 - Public holidays are official days off for the whole country of the system region, or of the
   country picked in settings. See `docs/adr/0004-public-holidays.md`.
 - Midnight, a time zone change and waking from sleep recompute today. A date the user picked stays

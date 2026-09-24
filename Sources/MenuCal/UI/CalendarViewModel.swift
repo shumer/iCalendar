@@ -29,6 +29,9 @@ final class CalendarViewModel {
   /// The day's list, open under the grid. It follows the selection while open.
   private(set) var isDayListOpen = false
   private(set) var dayRows: [EventRow] = []
+  /// Groups the list is narrowed to, for this run of the app only; empty means all. Closing
+  /// the panel keeps it, and the chips show it, so nothing is hidden in silence.
+  private(set) var listFilter: Set<UUID> = []
   /// The keyboard focus ring appears with the first key press, as it does in AppKit lists.
   private(set) var showsFocusRing = false
   var hoveredDay: Date?
@@ -188,6 +191,46 @@ final class CalendarViewModel {
   }
 
   func toggleDayList() { setDayList(open: !isDayListOpen) }
+
+  /// The chips: every group that is not hidden, in the settings' order. None with one group.
+  var filterChips: [EventGroup] {
+    let groups = eventSettings.settings.groups.filter(\.showsInList)
+    return groups.count > 1 ? groups : []
+  }
+
+  /// A click adds the group to the filter or takes it out, so several groups can be looked at
+  /// together; with Command, the click keeps only this group. No group chosen means all.
+  func toggleFilter(_ groupID: UUID, only: Bool) {
+    if only {
+      listFilter = listFilter == [groupID] ? [] : [groupID]
+    } else if listFilter.contains(groupID) {
+      listFilter.remove(groupID)
+    } else {
+      listFilter.insert(groupID)
+    }
+    rebuild()
+  }
+
+  /// The chip under the pointer widens to its full name, so a cut name is read without waiting
+  /// for the tooltip.
+  var hoveredChip: UUID?
+
+  /// "Школа" or "Школа, Работа": the groups the list is narrowed to, for the empty state.
+  var filterNames: String {
+    filterChips.filter { listFilter.contains($0.id) }.map(\.name).joined(separator: ", ")
+  }
+
+  func durationText(_ row: EventRow) -> String {
+    Self.durationFormatter.string(from: TimeInterval(row.durationMinutes * 60)) ?? ""
+  }
+
+  private static let durationFormatter: DateComponentsFormatter = {
+    let formatter = DateComponentsFormatter()
+    formatter.allowedUnits = [.hour, .minute]
+    formatter.unitsStyle = .abbreviated
+    formatter.zeroFormattingBehavior = .dropAll
+    return formatter
+  }()
 
   func openInCalendar(_ row: EventRow) { events.open(eventID: row.id) }
   func extendSelection(to day: DayCellModel) { changeMonth { $0.extendSelection(to: day.date, calendar: calendar) } }
@@ -395,10 +438,14 @@ final class CalendarViewModel {
       return
     }
     events.ensureLoaded(around: state.displayedMonth, calendar: calendar)
+    // A group that vanished from the settings leaves the filter, so it cannot narrow the list
+    // to nothing with no chip to show why.
+    let known = Set(eventSettings.settings.groups.map(\.id))
+    listFilter = listFilter.intersection(known)
     dayRows = EventListBuilder.rows(
       for: state.selectedDate, index: events.eventIndex, settings: eventSettings.settings,
       calendars: events.calendarsByID, calendar: calendar, timeFormatter: timeFormatter,
-      allDayText: L("events.allDay"))
+      dayFormatter: rangeFormatter, allDayText: L("events.allDay"), onlyGroups: listFilter)
   }
 
   private func holidayCalendar() -> HolidayCalendar? {

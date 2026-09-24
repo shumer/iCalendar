@@ -180,6 +180,8 @@ struct EventsPane: View {
             .lineLimit(1)
             .truncationMode(.middle)
         }
+        // The line is cut in the middle when the account is an address; the tooltip has it whole.
+        .help(group.name + "\n" + sourcesLine(group, members: members, settings: settings))
         Spacer(minLength: 12)
         VisibilityPicker(group: group, store: store)
           .fixedSize()

@@ -57,6 +57,9 @@
   place of the "in grid" checkbox that read as "show"; and a tick per calendar under its group,
   so one calendar of an account can be kept and the rest hidden.
 
+- **The day's list, second pass.** Group chips that narrow the list for the session, the end
+  under the start in the time column, "Untitled" for events without one.
+
 ## Next
 
 - **Week view** in the day's list ("Week" in its header, the week number column opening it) and

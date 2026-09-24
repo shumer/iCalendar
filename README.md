@@ -122,8 +122,9 @@ access once in **Settings > Events**; a work account appears only if it has been
 in Internet Accounts. Each account becomes a group with a colour; **Edit…** on a group changes
 its name and colour and picks its calendars, and its **Show** menu decides whether the group
 gets a dot under the days and a place in the day's list, the list only, or neither for now.
-The calendars of a group are listed under it: untick the ones you do not want to see. A day with events opens its list when clicked; a double click on an event
-opens it in Calendar.
+The calendars of a group are listed under it: untick the ones you do not want to see. A day with events opens its list when clicked: chips under the date narrow it to one group for
+a quick look (click again for all), each row shows when the event starts and ends, and a double
+click on an event opens it in Calendar.
 
 ### Vacation
 

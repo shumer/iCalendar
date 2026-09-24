@@ -161,3 +161,11 @@
 "settings.events.visibility.hidden" = "Приховано";
 "settings.events.calendarCountShown" = "календарів: %d із %d";
 "settings.events.calendarsInGroup.sub" = "Позначка тут переносить календар у цю групу. Показувати його чи ні вирішує позначка під групою в списку.";
+"events.untitled" = "Без назви";
+"events.none.group" = "Подій немає  ·  %@";
+"events.none.group.spoken" = "Немає подій групи %@";
+"events.chips" = "Групи";
+"events.chip.hidden" = "не вибрана";
+"events.spokenRange" = "з %@ до %@";
+"events.chip.shown" = "вибрана";
+"events.chip.hint" = "Клац додає або прибирає групу; Cmd-клац лишає лише її.";
