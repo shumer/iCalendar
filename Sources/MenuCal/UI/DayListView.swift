@@ -113,6 +113,8 @@ struct DayListView: View {
           .padding(.horizontal, metrics.groupChipPaddingH)
           .frame(height: metrics.groupChipRowHeight)
           .frame(maxWidth: model.hoveredChip == group.id ? nil : metrics.groupChipMaxWidth)
+          // Without this the row squeezes the widened chip back to make room for the others.
+          .fixedSize(horizontal: model.hoveredChip == group.id, vertical: false)
           .background(chipFill(group, chosen: chosen), in: Capsule())
           .overlay {
             if chosen {
